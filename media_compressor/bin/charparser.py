@@ -3,9 +3,10 @@ import sys
 
 
 def Bool(value: str):
-    if value == 'True':
+    value = value.lower()
+    if value == 'true':
         return True
-    elif value == 'False':
+    elif value == 'false':
         return False
     else:
         print("error: \"" + value + "\" is not a bool value, it's may a typo, please check your config")
