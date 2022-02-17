@@ -43,6 +43,7 @@ def compress(config_parser: configparser.ConfigParser, filepath: str, task_cnt: 
 
 def compress_video(config_parser: configparser.ConfigParser, filepath: str, task_cnt: int):
     _VIDEO_INFO = info_utils.Video(filepath)
+    _SIZE = _VIDEO_INFO.size
     _COMMAND = []
     # Input file
     addCommand(_COMMAND, '-i', filepath)
@@ -58,16 +59,20 @@ def compress_video(config_parser: configparser.ConfigParser, filepath: str, task
         _FRAMERATE += ' fps'
     else:
         _FRAMERATE = _ORI_FRAMERATE + '(none)'
-    # Zoom ratio
-    _ZOOM_RATIO = config_parser.get('TARGET_ZOOM_RATIO', 'enable')
-    _SIZE = _VIDEO_INFO.size
-    if charparser.Bool(_ZOOM_RATIO):
-        _ZOOM_RATIO = str(eval(config_parser.get('TARGET_ZOOM_RATIO', 'value')))
-        _WIDTH = float(_SIZE[0]) * float(_ZOOM_RATIO)
-        _HEIGHT = float(_SIZE[1]) * float(_ZOOM_RATIO)
+
+    # Quality
+    _QUALITY = config_parser.get('TARGET_QUALITY', 'enable')
+    _RES_RESOLUTION = "{width}x{height}".format(width=_SIZE[0], height=_SIZE[1])
+    if charparser.Bool(_QUALITY):
+        _QUALITY_VALUE = float(config_parser.get('TARGET_QUALITY', 'value'))
+        _HEIGHT = float(_SIZE[0])
+        _WIDTH = float(_SIZE[1])
+        if _HEIGHT > _QUALITY_VALUE:
+            _ZOOM_RATIO = _QUALITY_VALUE / _HEIGHT
+            _HEIGHT = _QUALITY_VALUE
+            _WIDTH = _WIDTH * _ZOOM_RATIO
+        _RES_RESOLUTION = "{width}x{height}".format(width=_WIDTH, height=_HEIGHT)
         addCommand(_COMMAND, '-vf', 'scale=' + str(_WIDTH) + ':' + str(_HEIGHT))
-    else:
-        _ZOOM_RATIO = 'none'
 
     # Encoder
     _CODEC = config_parser.get('TARGET_CODEC', 'value')
@@ -101,7 +106,7 @@ def compress_video(config_parser: configparser.ConfigParser, filepath: str, task
     print("输出位置: " + _OUTPUT_INFO.OUTPUT_DIR)
     print("视频码率: " + str(_BITRATE_V) + "k")
     print("视频帧率: " + _FRAMERATE)
-    print("缩放比例: " + _ZOOM_RATIO)
+    print("分辨率: {width}x{height} -> ".format(width=_SIZE[0], height=_SIZE[1]) + _RES_RESOLUTION)
     print("编码器: " + _CODEC)
     print("编码器预设: " + _CODEC_PRESET)
     _LOG_FILE_ENABLE = config_parser.get('LOGGING', 'enable')
@@ -117,7 +122,8 @@ def compress_video(config_parser: configparser.ConfigParser, filepath: str, task
                         "\n    CRF:" + _CRF +
                         "\n    Input File Path: " + filepath +
                         "\n    Framerate: " + _ORI_FRAMERATE + " -> " + _FRAMERATE +
-                        "\n    Zoom: " + _ZOOM_RATIO +
+                        "\n    Resolution: {width}x{height} -> ".format(width=_SIZE[0], height=_SIZE[1]) +
+                        _RES_RESOLUTION +
                         "\n    Encoder: " + _CODEC +
                         "\n    Encoder Preset: " + _CODEC_PRESET + "\n")
     ffpb.main(_COMMAND, encoding='utf-8')
