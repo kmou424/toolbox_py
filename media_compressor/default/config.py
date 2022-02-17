@@ -2,7 +2,7 @@ from bin import info_utils
 
 
 class VideoConf:
-    SECTIONS = ['TARGET_BITRATE',
+    SECTIONS = ['TARGET_CRF',
                 'TARGET_FRAMERATE',
                 'TARGET_ZOOM_RATIO',
                 'TARGET_CODEC',
@@ -13,12 +13,14 @@ class VideoConf:
 
     CODEC_PRESET = ['ultrafast', 'superfast', 'veryfast', 'faster', 'fast', 'medium', 'slow', 'slower', 'veryslow']
 
-    SECTIONS_COMMENT = [['Set target bitrate for your video'],
+    SECTIONS_COMMENT = [['Set target crf for your video', 'You can type 0-51, 0 is lossless, 18 is visually lossless',
+                         'Note: 18-28 is recommended, we mostly choose 23.5'],
                         ['[Optional] Set target framerate for your video'],
                         ['[Optional] Set zoom ratio for your video'],
                         ['Set encoder codec to convert your video',
                          'Suggest options: ' + "libx264, libx265",
-                         'Available options: ' + ', '.join(info_utils.get_encoders())],
+                         'Available options: ' + ', '.join(info_utils.get_encoders()),
+                         'Note: Encoders ending in *_nvenc or *_cuvid are supported GPU'],
                         ['Set ffmpeg preset for codec (control progress speed and quality of output video)',
                          'Available options: ' + ', '.join(CODEC_PRESET)],
                         ['Scan video files as below extension name (split as \'|\')'],
@@ -37,7 +39,7 @@ class VideoConf:
                           ['input', 'output'],
                           ['enable', 'name']]
 
-    SECTIONS_CONF_VALUE = [['2500'],
+    SECTIONS_CONF_VALUE = [['23.5'],
                            ['False', '60'],
                            ['False', '1.0'],
                            ['libx264'],

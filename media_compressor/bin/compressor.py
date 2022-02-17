@@ -46,9 +46,9 @@ def compress_video(config_parser: configparser.ConfigParser, filepath: str, task
     _COMMAND = []
     # Input file
     addCommand(_COMMAND, '-i', filepath)
-    # Bitrate
-    _BITRATE = config_parser.get('TARGET_BITRATE', 'value')
-    addCommand(_COMMAND, '-b:v', _BITRATE + 'k')
+    # Crf
+    _CRF = config_parser.get('TARGET_CRF', 'value')
+    addCommand(_COMMAND, '-crf', _CRF)
     # Framerate
     _FRAMERATE = config_parser.get('TARGET_FRAMERATE', 'enable')
     _ORI_FRAMERATE = _VIDEO_INFO.framerate + ' fps'
@@ -109,22 +109,18 @@ def compress_video(config_parser: configparser.ConfigParser, filepath: str, task
     if charparser.Bool(_LOG_FILE_ENABLE):
         _LOG_FILE = open(_OUTPUT_INFO.OUTPUT_DIR + charparser.get_path_delimiter() +
                          config_parser.get('LOGGING', 'name'), 'a')
-    if float(_BITRATE) < _BITRATE_V:
-        print("大于" + _BITRATE + "k, 开始压缩视频...")
-        print("码率: " + str(_BITRATE_V) + "k -> " + _BITRATE + "k")
-        if charparser.Bool(_LOG_FILE_ENABLE):
-            _LOG_FILE.write("[" + str(task_cnt) + "]" +
-                            _OUTPUT_INFO.FILENAME_EXT + ": " + str(_BITRATE_V) + "k -> " + _BITRATE + "k; " +
-                            "\n    Input File Path: " + filepath +
-                            "\n    Framerate: " + _ORI_FRAMERATE + " -> " + _FRAMERATE +
-                            "\n    Zoom: " + _ZOOM_RATIO +
-                            "\n    Encoder: " + _CODEC +
-                            "\n    Encoder Preset: " + _CODEC_PRESET + "\n")
-        ffpb.main(_COMMAND, encoding='utf-8')
-    else:
-        print("低于" + _BITRATE + "k, 无需压缩, 默认跳过...")
-        if charparser.Bool(_LOG_FILE_ENABLE):
-            _LOG_FILE.write("[" + str(task_cnt) + "]" + _OUTPUT_INFO.FILENAME_EXT + ": Skipped...\n")
+
+    print("开始压缩视频...")
+    if charparser.Bool(_LOG_FILE_ENABLE):
+        _LOG_FILE.write("[" + str(task_cnt) + "]" +
+                        _OUTPUT_INFO.FILENAME_EXT + ": " +
+                        "\n    CRF:" + _CRF +
+                        "\n    Input File Path: " + filepath +
+                        "\n    Framerate: " + _ORI_FRAMERATE + " -> " + _FRAMERATE +
+                        "\n    Zoom: " + _ZOOM_RATIO +
+                        "\n    Encoder: " + _CODEC +
+                        "\n    Encoder Preset: " + _CODEC_PRESET + "\n")
+    ffpb.main(_COMMAND, encoding='utf-8')
     print()
 
 
