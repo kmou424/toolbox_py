@@ -71,8 +71,8 @@ def compress_video(config_parser: configparser.ConfigParser, filepath: str, task
             _ZOOM_RATIO = _QUALITY_VALUE / _HEIGHT
             _HEIGHT = _QUALITY_VALUE
             _WIDTH = _WIDTH * _ZOOM_RATIO
-        _RES_RESOLUTION = "{width}x{height}".format(width=_WIDTH, height=_HEIGHT)
         addCommand(_COMMAND, '-vf', 'scale=' + str(_WIDTH) + ':' + str(_HEIGHT))
+        _RES_RESOLUTION = "{width}x{height}".format(width=int(_WIDTH), height=int(_HEIGHT))
 
     # Encoder
     _CODEC = config_parser.get('TARGET_CODEC', 'value')
@@ -106,6 +106,7 @@ def compress_video(config_parser: configparser.ConfigParser, filepath: str, task
     print("输出位置: " + _OUTPUT_INFO.OUTPUT_DIR)
     print("视频码率: " + str(_BITRATE_V) + "k")
     print("视频帧率: " + _FRAMERATE)
+    print("目标CRF: " + _CRF)
     print("分辨率: {width}x{height} -> ".format(width=_SIZE[0], height=_SIZE[1]) + _RES_RESOLUTION)
     print("编码器: " + _CODEC)
     print("编码器预设: " + _CODEC_PRESET)
@@ -118,9 +119,8 @@ def compress_video(config_parser: configparser.ConfigParser, filepath: str, task
     print("开始压缩视频...")
     if charparser.Bool(_LOG_FILE_ENABLE):
         _LOG_FILE.write("[" + str(task_cnt) + "]" +
-                        _OUTPUT_INFO.FILENAME_EXT + ": " +
-                        "\n    CRF:" + _CRF +
                         "\n    Input File Path: " + filepath +
+                        "\n    CRF:" + _CRF +
                         "\n    Framerate: " + _ORI_FRAMERATE + " -> " + _FRAMERATE +
                         "\n    Resolution: {width}x{height} -> ".format(width=_SIZE[0], height=_SIZE[1]) +
                         _RES_RESOLUTION +
