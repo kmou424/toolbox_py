@@ -45,6 +45,14 @@ def compress_video(config_parser: configparser.ConfigParser, filepath: str, task
     _VIDEO_INFO = info_utils.Video(filepath)
     _SIZE = _VIDEO_INFO.size
     _COMMAND = []
+    # Decoder
+    _DECODER_ENABLED = config_parser.get('TARGET_DECODER', 'enable')
+    _DECODER = 'None'
+    if charparser.Bool(_DECODER_ENABLED):
+        _HWACCEL = config_parser.get('TARGET_DECODER', 'hwaccel')
+        _DECODER = config_parser.get('TARGET_DECODER', 'decoder')
+        addCommand(_COMMAND, '-hwaccel', _HWACCEL)
+        addCommand(_COMMAND, '-c:v', _DECODER)
     # Input file
     addCommand(_COMMAND, '-i', filepath)
     # Crf
@@ -83,16 +91,25 @@ def compress_video(config_parser: configparser.ConfigParser, filepath: str, task
         _RES_RESOLUTION = "{width}x{height}".format(width=int(_WIDTH), height=int(_HEIGHT))
 
     # Encoder
-    _CODEC = config_parser.get('TARGET_CODEC', 'value')
-    if _CODEC in info_utils.get_encoders():
-        addCommand(_COMMAND, '-c:v', _CODEC)
+    _ENCODER = config_parser.get('TARGET_ENCODER', 'encoder')
+    _HW_ENABLED = False
+    if _ENCODER in info_utils.get_encoders():
+        addCommand(_COMMAND, '-c:v', _ENCODER)
+        if _ENCODER.__contains__('nvenc')\
+                or _ENCODER.__contains__('qsv')\
+                or _ENCODER.__contains__('amf'):
+            _HW_ENABLED = True
+            addCommand(_COMMAND, '-profile:v', 'main')
+            addCommand(_COMMAND, '-tier', 'high')
+            addCommand(_COMMAND, '-rc', 'vbr_hq')
+            addCommand(_COMMAND, '-spatial_aq', '1')
     else:
-        _CODEC = _CODEC + '(无效)'
+        _ENCODER = _ENCODER + '(无效)'
 
     # Encoder preset
-    _CODEC_PRESET = config_parser.get('TARGET_CODEC_PRESET', 'enable')
+    _CODEC_PRESET = config_parser.get('TARGET_ENCODER_PRESET', 'enable')
     if charparser.Bool(_CODEC_PRESET):
-        _CODEC_PRESET = config_parser.get('TARGET_CODEC_PRESET', 'value')
+        _CODEC_PRESET = config_parser.get('TARGET_ENCODER_PRESET', 'value')
         if _CODEC_PRESET in config.VideoConf.CODEC_PRESET:
             addCommand(_COMMAND, '-preset', _CODEC_PRESET)
         else:
@@ -116,8 +133,10 @@ def compress_video(config_parser: configparser.ConfigParser, filepath: str, task
     print("视频帧率: " + _FRAMERATE)
     print("目标CRF: " + _CRF)
     print("分辨率: {width}x{height} -> ".format(width=_SIZE[0], height=_SIZE[1]) + _RES_RESOLUTION)
-    print("编码器: " + _CODEC)
+    print("解码器: " + _DECODER)
+    print("编码器: " + _ENCODER)
     print("编码器预设: " + _CODEC_PRESET)
+    print("硬件加速: " + str(_HW_ENABLED))
     _LOG_FILE_ENABLE = config_parser.get('LOGGING', 'enable')
     _LOG_FILE = ''
     if charparser.Bool(_LOG_FILE_ENABLE):
@@ -132,7 +151,8 @@ def compress_video(config_parser: configparser.ConfigParser, filepath: str, task
                         "\n    Framerate: " + _ORI_FRAMERATE + " -> " + _FRAMERATE +
                         "\n    Resolution: {width}x{height} -> ".format(width=_SIZE[0], height=_SIZE[1]) +
                         _RES_RESOLUTION +
-                        "\n    Encoder: " + _CODEC +
+                        "\n    Decoder: " + _DECODER +
+                        "\n    Encoder: " + _ENCODER +
                         "\n    Encoder Preset: " + _CODEC_PRESET + "\n")
     ffpb.main(_COMMAND, encoding='utf-8')
     print()
