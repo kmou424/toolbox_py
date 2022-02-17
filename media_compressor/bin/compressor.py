@@ -67,10 +67,18 @@ def compress_video(config_parser: configparser.ConfigParser, filepath: str, task
         _QUALITY_VALUE = float(config_parser.get('TARGET_QUALITY', 'value'))
         _HEIGHT = float(_SIZE[0])
         _WIDTH = float(_SIZE[1])
-        if _HEIGHT > _QUALITY_VALUE:
-            _ZOOM_RATIO = _QUALITY_VALUE / _HEIGHT
-            _HEIGHT = _QUALITY_VALUE
-            _WIDTH = _WIDTH * _ZOOM_RATIO
+        if _HEIGHT > _WIDTH:
+            # 竖屏视频
+            if _WIDTH > _QUALITY_VALUE:
+                _ZOOM_RATIO = _QUALITY_VALUE / _WIDTH
+                _HEIGHT = _HEIGHT * _ZOOM_RATIO
+                _WIDTH = _QUALITY_VALUE
+        else:
+            # 横屏视频
+            if _HEIGHT > _QUALITY_VALUE:
+                _ZOOM_RATIO = _QUALITY_VALUE / _HEIGHT
+                _HEIGHT = _QUALITY_VALUE
+                _WIDTH = _WIDTH * _ZOOM_RATIO
         addCommand(_COMMAND, '-vf', 'scale=' + str(_WIDTH) + ':' + str(_HEIGHT))
         _RES_RESOLUTION = "{width}x{height}".format(width=int(_WIDTH), height=int(_HEIGHT))
 
