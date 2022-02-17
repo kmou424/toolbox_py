@@ -28,8 +28,8 @@ class Info:
     def __get_size(self, filepath):
         f = ffmpeg.stream.Stream()
         f.input(filepath)
-        self.size = [str(f.video_info().get('streams')[0]['height']),
-                     str(f.video_info().get('streams')[0]['width'])]
+        self.size = [str(f.video_info().get('streams')[0]['width']),
+                     str(f.video_info().get('streams')[0]['height'])]
 
 
 class Video(Info):

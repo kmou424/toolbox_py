@@ -65,8 +65,8 @@ def compress_video(config_parser: configparser.ConfigParser, filepath: str, task
     _RES_RESOLUTION = "{width}x{height}".format(width=_SIZE[0], height=_SIZE[1])
     if charparser.Bool(_QUALITY):
         _QUALITY_VALUE = float(config_parser.get('TARGET_QUALITY', 'value'))
-        _HEIGHT = float(_SIZE[0])
-        _WIDTH = float(_SIZE[1])
+        _WIDTH = float(_SIZE[0])
+        _HEIGHT = float(_SIZE[1])
         if _HEIGHT > _WIDTH:
             # 竖屏视频
             if _WIDTH > _QUALITY_VALUE:
