@@ -128,6 +128,9 @@ def compress_video(config_parser: configparser.ConfigParser, filepath: str, task
                             filename=_OUTPUT_INFO.FILENAME,
                             suffix=_SUFFIX,
                             format=_OUTPUT_INFO.OUTPUT_FORMAT))
+
+    # EXTRA
+    _DEL_SRC = config_parser.get('EXTRA', 'delSrc')
     _BITRATE_V = _VIDEO_INFO.bitrate
 
     print()
@@ -163,6 +166,8 @@ def compress_video(config_parser: configparser.ConfigParser, filepath: str, task
                         "\n    Encoder Preset: " + _CODEC_PRESET + "\n")
     ffpb.main(_COMMAND, encoding='utf-8')
     print()
+    if charparser.Bool(_DEL_SRC):
+        os.remove(filepath)
 
 
 def compress_image(config_parser: configparser.ConfigParser, filepath: str, task_cnt: int):

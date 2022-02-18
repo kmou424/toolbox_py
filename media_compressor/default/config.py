@@ -11,7 +11,8 @@ class VideoConf:
                 'IO_FORMAT',
                 'IO_FIX',
                 'IO_DIR',
-                'LOGGING']
+                'LOGGING',
+                'EXTRA']
 
     CODEC_PRESET = ['ultrafast', 'superfast', 'veryfast', 'faster', 'fast', 'medium', 'slow', 'slower', 'veryslow']
 
@@ -37,7 +38,8 @@ class VideoConf:
                          '[Important] You must use \'absolute\' or \'relative\' to mark it is a absolute path or yet'
                          'by \'[]\', such as \'[absolute]D:\\Videos\\Anime\'',
                          'Use [source] to mark output directory is same as input'],
-                        ['[Optional] To save log for progress']]
+                        ['[Optional] To save log for progress'],
+                        ['[Optional] Some extra settings', 'delSrc: Delete original file when compress completed']]
 
     SECTIONS_CONF_NAME = [['value'],
                           ['enable', 'value'],
@@ -48,7 +50,8 @@ class VideoConf:
                           ['input', 'output'],
                           ['prefix', 'suffix'],
                           ['input', 'output'],
-                          ['enable', 'name']]
+                          ['enable', 'name'],
+                          ['delSrc']]
 
     SECTIONS_CONF_VALUE = [['23.5'],
                            ['False', '60'],
@@ -59,7 +62,8 @@ class VideoConf:
                            ['mp4|mov', 'mp4'],
                            ['[compressed]', ''],
                            ['none', '[relative]out'],
-                           ['True', 'log_video.txt']]
+                           ['True', 'log_video.txt'],
+                           ['False']]
 
 
 class ImageConf:
