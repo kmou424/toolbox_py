@@ -91,15 +91,27 @@ def compress_video(config_parser: configparser.ConfigParser, filepath: str, task
         _RES_RESOLUTION = "{width}x{height}".format(width=int(_WIDTH), height=int(_HEIGHT))
 
     # Encoder
-    _ENCODER = config_parser.get('TARGET_ENCODER', 'encoder')
     _HW_ENABLED = False
+    _ENCODER = config_parser.get('TARGET_ENCODER', 'encoder')
+    _CUSTOM_YUV_PIX_FMT = config_parser.get('TARGET_ENCODER', 'custom_yuv_pix_fmt')
+    _BIT_DEPTH = config_parser.get('TARGET_ENCODER', 'yuv_bit_depth')
+    if _BIT_DEPTH == '10':
+        _BIT_DEPTH = '10le'
+    else:
+        _BIT_DEPTH = ''
+    _PIX_FMT = "yuv{colorSpace}p{bitDepth}"\
+        .format(colorSpace=config_parser.get('TARGET_ENCODER', 'yuv_colorspace'),
+                bitDepth=_BIT_DEPTH)
     if _ENCODER in info_utils.get_encoders():
         addCommand(_COMMAND, '-c:v', _ENCODER)
+        if charparser.Bool(_CUSTOM_YUV_PIX_FMT):
+            addCommand(_COMMAND, '-pix_fmt', _PIX_FMT)
+        else:
+            _PIX_FMT = ''
         if _ENCODER.__contains__('nvenc')\
                 or _ENCODER.__contains__('qsv')\
                 or _ENCODER.__contains__('amf'):
             _HW_ENABLED = True
-            addCommand(_COMMAND, '-profile:v', 'main')
             addCommand(_COMMAND, '-tier', 'high')
             addCommand(_COMMAND, '-rc', 'vbr_hq')
             addCommand(_COMMAND, '-spatial_aq', '1')
@@ -144,7 +156,7 @@ def compress_video(config_parser: configparser.ConfigParser, filepath: str, task
     print("目标CRF: " + _CRF)
     print("分辨率: {width}x{height} -> ".format(width=_SIZE[0], height=_SIZE[1]) + _RES_RESOLUTION)
     print("解码器: " + _DECODER)
-    print("编码器: " + _ENCODER)
+    print("编码器: {encoder} {pix_fmt}".format(encoder=_ENCODER, pix_fmt=_PIX_FMT))
     print("编码器预设: " + _CODEC_PRESET)
     print("硬件加速: " + str(_HW_ENABLED))
     _LOG_FILE_ENABLE = config_parser.get('LOGGING', 'enable')
