@@ -173,12 +173,16 @@ def compress_video(config_parser: configparser.ConfigParser, filepath: str, task
                         "\n    Resolution: {width}x{height} -> ".format(width=_SIZE[0], height=_SIZE[1]) +
                         _RES_RESOLUTION +
                         "\n    Decoder: " + _DECODER +
-                        "\n    Encoder: " + _ENCODER +
-                        "\n    Encoder Preset: " + _CODEC_PRESET + "\n")
-    ffpb.main(_COMMAND, encoding='utf-8')
+                        "\n    Encoder: {encoder} {pix_fmt}".format(encoder=_ENCODER, pix_fmt=_PIX_FMT) +
+                        "\n    Encoder Preset: " + _CODEC_PRESET +
+                        "\n    Hardware Acceleration: " + str(_HW_ENABLED) + '\n')
+    _RET = ffpb.main(_COMMAND, encoding='utf-8')
+    if _RET != 0:
+        print("压缩失败!")
+    else:
+        if charparser.Bool(_DEL_SRC):
+            os.remove(filepath)
     print()
-    if charparser.Bool(_DEL_SRC):
-        os.remove(filepath)
 
 
 def compress_image(config_parser: configparser.ConfigParser, filepath: str, task_cnt: int):
