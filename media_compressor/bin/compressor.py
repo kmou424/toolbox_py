@@ -167,8 +167,7 @@ def compress_video(config_parser: configparser.ConfigParser, filepath: str, task
 
     print("开始压缩视频...")
     if charparser.Bool(_LOG_FILE_ENABLE):
-        _LOG_FILE.write("[" + str(task_cnt) + "]" +
-                        "\n    Input File Path: " + filepath +
+        _LOG_FILE.write("[" + str(task_cnt) + "] " + filepath +
                         "\n    CRF:" + _CRF +
                         "\n    Framerate: " + _ORI_FRAMERATE + " -> " + _FRAMERATE +
                         "\n    Resolution: {width}x{height} -> ".format(width=_SIZE[0], height=_SIZE[1]) +
