@@ -68,7 +68,7 @@ class VideoConf:
                            ['mp4|mov', 'mp4'],
                            ['[compressed]', ''],
                            ['none', '[relative]out'],
-                           ['True', 'log_video.txt'],
+                           ['False', 'log_video.txt'],
                            ['False']]
 
 
