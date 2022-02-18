@@ -75,7 +75,7 @@ if not Path(_CONFIG_PATH).exists():
 config_parser.read(_CONFIG_PATH, 'utf-8')
 
 _INPUT_FORMAT = config_parser.get('IO_FORMAT', 'input').split('|')
-_INPUT_DIR = charparser.parse_path(config_parser.get('IO_DIR', 'input'))
+_INPUT_DIR = charparser.parse_path(config_parser.get('IO_DIR', 'input'), os.getcwd())
 if _INPUT_DIR == 'none':
     _INPUT_DIR = os.getcwd()
 _FILE_LIST = filequery.search_by_ext(filequery.list_all_files(_INPUT_DIR), _INPUT_FORMAT)

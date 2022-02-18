@@ -9,6 +9,7 @@ class VideoConf:
                 'TARGET_ENCODER',
                 'TARGET_ENCODER_PRESET',
                 'IO_FORMAT',
+                'IO_FIX',
                 'IO_DIR',
                 'LOGGING']
 
@@ -30,10 +31,12 @@ class VideoConf:
                         ['Set ffmpeg preset for codec (control progress speed and quality of output video)',
                          'Available options: ' + ', '.join(CODEC_PRESET)],
                         ['Scan video files as below extension name (split as \'|\')'],
+                        ['Prefix and suffix for output file'],
                         ['Output video files extension name (follow codec of your choice)',
                          'Use \'none\' to mark path is not specified',
-                         '[Important] You must use \'absolute\' or \'relative\' to mark it is a absolute path or ye-',
-                         't by \'[]\', such as \'[absolute]D:\\Videos\\Anime\''],
+                         '[Important] You must use \'absolute\' or \'relative\' to mark it is a absolute path or yet'
+                         'by \'[]\', such as \'[absolute]D:\\Videos\\Anime\'',
+                         'Use [source] to mark output directory is same as input'],
                         ['[Optional] To save log for progress']]
 
     SECTIONS_CONF_NAME = [['value'],
@@ -43,6 +46,7 @@ class VideoConf:
                           ['encoder'],
                           ['enable', 'value'],
                           ['input', 'output'],
+                          ['prefix', 'suffix'],
                           ['input', 'output'],
                           ['enable', 'name']]
 
@@ -53,6 +57,7 @@ class VideoConf:
                            ['libx264'],
                            ['True', 'medium'],
                            ['mp4|mov', 'mp4'],
+                           ['[compressed]', ''],
                            ['none', '[relative]out'],
                            ['True', 'log_video.txt']]
 
@@ -68,8 +73,9 @@ class ImageConf:
                         ['Scan image files as below extension name (split as \'|\')'],
                         ['Output image files extension name (follow codec of your choice)',
                          'Use \'none\' to mark path is not specified',
-                         '[Important] You must use \'absolute\' or \'relative\' to mark it is a absolute path or ye-',
-                         't by \'[]\', such as \'[absolute]D:\\Images\\Anime\''],
+                         '[Important] You must use \'absolute\' or \'relative\' to mark it is a absolute path or yet'
+                         'by \'[]\', such as \'[absolute]D:\\Videos\\Anime\'',
+                         'Use [source] to mark output directory is same as input'],
                         ['[Optional] To save log for progress']]
 
     SECTIONS_CONF_NAME = [['value'],

@@ -15,7 +15,7 @@ class __CommonOutput:
     FILENAME = ''
 
     def __init__(self, config_parser: configparser.ConfigParser, filepath: str):
-        self.OUTPUT_DIR = charparser.parse_path(config_parser.get('IO_DIR', 'output'))
+        self.OUTPUT_DIR = charparser.parse_path(config_parser.get('IO_DIR', 'output'), filepath)
         if not Path(self.OUTPUT_DIR).exists():
             os.makedirs(self.OUTPUT_DIR)
         self.OUTPUT_FORMAT = config_parser.get('IO_FORMAT', 'output')
@@ -119,8 +119,15 @@ def compress_video(config_parser: configparser.ConfigParser, filepath: str, task
 
     # Output file
     _OUTPUT_INFO = __CommonOutput(config_parser, filepath)
-    _COMMAND.append(_OUTPUT_INFO.OUTPUT_DIR + charparser.get_path_delimiter() +
-                    _OUTPUT_INFO.FILENAME + '.' + _OUTPUT_INFO.OUTPUT_FORMAT)
+    _PREFIX = config_parser.get('IO_FIX', 'prefix')
+    _SUFFIX = config_parser.get('IO_FIX', 'suffix')
+    _COMMAND.append("{dir}{delimiter}{prefix}{filename}{suffix}.{format}"
+                    .format(dir=_OUTPUT_INFO.OUTPUT_DIR,
+                            delimiter=charparser.get_path_delimiter(),
+                            prefix=_PREFIX,
+                            filename=_OUTPUT_INFO.FILENAME,
+                            suffix=_SUFFIX,
+                            format=_OUTPUT_INFO.OUTPUT_FORMAT))
     _BITRATE_V = _VIDEO_INFO.bitrate
 
     print()

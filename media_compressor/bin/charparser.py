@@ -23,7 +23,7 @@ def get_path_delimiter():
         exit(1)
 
 
-def parse_path(path: str):
+def parse_path(path: str, ori_filepath: str):
     if path == 'none':
         return path
     if path[0] != '[':
@@ -35,10 +35,14 @@ def parse_path(path: str):
         if path[i] == ']':
             end = i
             break
+    if path.endswith('\\'):
+        path.rstrip('\\')
     if path[start:end] == 'absolute':
         return path[end + 1:]
     elif path[start:end] == 'relative':
-        return os.getcwd() + get_path_delimiter() + path[end + 1:]
+        return os.path.dirname(ori_filepath) + get_path_delimiter() + path[end + 1:]
+    elif path[start:end] == 'source':
+        return os.path.dirname(ori_filepath)
     else:
         print("error: \"" + path[0:end + 1] + "\" is unrecognized, it's may a typo. For more information"
                                               ", please check notes in .ini file")
