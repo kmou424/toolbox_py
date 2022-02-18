@@ -142,7 +142,7 @@ def compress_video(config_parser: configparser.ConfigParser, filepath: str, task
                             format=_OUTPUT_INFO.OUTPUT_FORMAT))
 
     # EXTRA
-    _DEL_SRC = config_parser.get('EXTRA', 'delSrc')
+    _DEL_SRC = config_parser.get('EXTRA', 'del_src')
     _BITRATE_V = _VIDEO_INFO.bitrate
 
     print()

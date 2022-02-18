@@ -45,7 +45,7 @@ class VideoConf:
                          'by \'[]\', such as \'[absolute]D:\\Videos\\Anime\'',
                          'Use [source] to mark output directory is same as input'],
                         ['[Optional] To save log for progress'],
-                        ['[Optional] Some extra settings', 'delSrc: Delete original file when compress completed']]
+                        ['[Optional] Some extra settings', 'del_src: Delete original file when compress completed']]
 
     SECTIONS_CONF_NAME = [['value'],
                           ['enable', 'value'],
@@ -57,7 +57,7 @@ class VideoConf:
                           ['prefix', 'suffix'],
                           ['input', 'output'],
                           ['enable', 'name'],
-                          ['delSrc']]
+                          ['del_src']]
 
     SECTIONS_CONF_VALUE = [['23.5'],
                            ['False', '60'],
