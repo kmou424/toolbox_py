@@ -55,9 +55,16 @@ def compress_video(config_parser: configparser.ConfigParser, filepath: str, task
         addCommand(_COMMAND, '-c:v', _DECODER)
     # Input file
     addCommand(_COMMAND, '-i', filepath)
-    # Crf
-    _CRF = config_parser.get('TARGET_CRF', 'value')
-    addCommand(_COMMAND, '-crf', _CRF)
+    # Compress arg
+    _COMPRESS_ARG = config_parser.get('TARGET_COMPRESS_RATE', 'compress_arg')
+    _COMPRESS_ARG_VALUE = config_parser.get('TARGET_COMPRESS_RATE', 'value')
+    if _COMPRESS_ARG == 'crf':
+        addCommand(_COMMAND, '-crf', _COMPRESS_ARG_VALUE)
+    if _COMPRESS_ARG == 'qp':
+        addCommand(_COMMAND, '-qp', str(int(float(_COMPRESS_ARG_VALUE))))
+    if _COMPRESS_ARG != 'qp' and _COMPRESS_ARG != 'crf':
+        _COMPRESS_ARG = 'None'
+        _COMPRESS_ARG_VALUE = 'None'
     # Framerate
     _FRAMERATE = config_parser.get('TARGET_FRAMERATE', 'enable')
     _ORI_FRAMERATE = _VIDEO_INFO.framerate + ' fps'
@@ -112,9 +119,10 @@ def compress_video(config_parser: configparser.ConfigParser, filepath: str, task
                 or _ENCODER.__contains__('qsv')\
                 or _ENCODER.__contains__('amf'):
             _HW_ENABLED = True
-            addCommand(_COMMAND, '-tier', 'high')
-            addCommand(_COMMAND, '-rc', 'vbr_hq')
-            addCommand(_COMMAND, '-spatial_aq', '1')
+            if _COMPRESS_ARG == 'crf':
+                addCommand(_COMMAND, '-tier', 'high')
+                addCommand(_COMMAND, '-rc', 'vbr_hq')
+                addCommand(_COMMAND, '-spatial_aq', '1')
     else:
         _ENCODER = _ENCODER + '(无效)'
 
@@ -149,11 +157,15 @@ def compress_video(config_parser: configparser.ConfigParser, filepath: str, task
     print("当前工作路径: " + os.getcwd())
     print("第" + str(task_cnt) + "个视频处理任务")
     print("输入文件名: " + _OUTPUT_INFO.FILENAME_EXT)
-    print("输出文件名: " + _OUTPUT_INFO.FILENAME + '.' + _OUTPUT_INFO.OUTPUT_FORMAT)
+    print("输出文件名: {prefix}{filename}{suffix}.{format}".format(
+                            prefix=_PREFIX,
+                            filename=_OUTPUT_INFO.FILENAME,
+                            suffix=_SUFFIX,
+                            format=_OUTPUT_INFO.OUTPUT_FORMAT))
     print("输出位置: " + _OUTPUT_INFO.OUTPUT_DIR)
     print("视频码率: " + str(_BITRATE_V) + "k")
     print("视频帧率: " + _FRAMERATE)
-    print("目标CRF: " + _CRF)
+    print("压缩方法和压缩率: {arg} {comp_value}".format(arg=_COMPRESS_ARG, comp_value=_COMPRESS_ARG_VALUE))
     print("分辨率: {width}x{height} -> ".format(width=_SIZE[0], height=_SIZE[1]) + _RES_RESOLUTION)
     print("解码器: " + _DECODER)
     print("编码器: {encoder} {pix_fmt}".format(encoder=_ENCODER, pix_fmt=_PIX_FMT))
@@ -168,7 +180,7 @@ def compress_video(config_parser: configparser.ConfigParser, filepath: str, task
     print("开始压缩视频...")
     if charparser.Bool(_LOG_FILE_ENABLE):
         _LOG_FILE.write("[" + str(task_cnt) + "] " + filepath +
-                        "\n    CRF:" + _CRF +
+                        "\n    Compress Rate: {arg} {comp_value}".format(arg=_COMPRESS_ARG, comp_value=_COMPRESS_ARG_VALUE) +
                         "\n    Framerate: " + _ORI_FRAMERATE + " -> " + _FRAMERATE +
                         "\n    Resolution: {width}x{height} -> ".format(width=_SIZE[0], height=_SIZE[1]) +
                         _RES_RESOLUTION +

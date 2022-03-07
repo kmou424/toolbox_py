@@ -2,7 +2,7 @@ from bin import info_utils
 
 
 class VideoConf:
-    SECTIONS = ['TARGET_CRF',
+    SECTIONS = ['TARGET_COMPRESS_RATE',
                 'TARGET_FRAMERATE',
                 'TARGET_QUALITY',
                 'TARGET_DECODER',
@@ -16,7 +16,8 @@ class VideoConf:
 
     CODEC_PRESET = ['ultrafast', 'superfast', 'veryfast', 'faster', 'fast', 'medium', 'slow', 'slower', 'veryslow']
 
-    SECTIONS_COMMENT = [['Set target crf for your video', 'You can type 0-51, 0 is lossless, 18 is visually lossless',
+    SECTIONS_COMMENT = [['Set target compress rate for your video', 'compress_arg: \'crf\' or \'qp\'',
+                         'You can type 0-51, 0 is lossless, 18 is visually lossless',
                          'Note: 18-28 is recommended, we mostly choose 23.5'],
                         ['[Optional] Set target framerate for your video'],
                         ['[Optional] Set video quality for your video',
@@ -47,7 +48,7 @@ class VideoConf:
                         ['[Optional] To save log for progress'],
                         ['[Optional] Some extra settings', 'del_src: Delete original file when compress completed']]
 
-    SECTIONS_CONF_NAME = [['value'],
+    SECTIONS_CONF_NAME = [['compress_arg', 'value'],
                           ['enable', 'value'],
                           ['enable', 'value'],
                           ['enable', 'hwaccel', 'decoder'],
@@ -59,7 +60,7 @@ class VideoConf:
                           ['enable', 'name'],
                           ['del_src']]
 
-    SECTIONS_CONF_VALUE = [['23.5'],
+    SECTIONS_CONF_VALUE = [['crf', '23.5'],
                            ['False', '60'],
                            ['False', '720'],
                            ['False', 'cuvid', 'h264_cuvid'],
