@@ -151,6 +151,10 @@ def compress_video(config_parser: configparser.ConfigParser, filepath: str, task
 
     # EXTRA
     _DEL_SRC = config_parser.get('EXTRA', 'del_src')
+
+    # SKIP
+    _SKIP_MIN_BITRATE = int(config_parser.get('SKIP', 'min_bitrate'))
+
     _BITRATE_V = _VIDEO_INFO.bitrate
 
     print()
@@ -177,23 +181,26 @@ def compress_video(config_parser: configparser.ConfigParser, filepath: str, task
         _LOG_FILE = open(os.getcwd() + charparser.get_path_delimiter() +
                          config_parser.get('LOGGING', 'name'), 'a')
 
-    print("开始压缩视频...")
-    if charparser.Bool(_LOG_FILE_ENABLE):
-        _LOG_FILE.write("[" + str(task_cnt) + "] " + filepath +
-                        "\n    Compress Rate: {arg} {comp_value}".format(arg=_COMPRESS_ARG, comp_value=_COMPRESS_ARG_VALUE) +
-                        "\n    Framerate: " + _ORI_FRAMERATE + " -> " + _FRAMERATE +
-                        "\n    Resolution: {width}x{height} -> ".format(width=_SIZE[0], height=_SIZE[1]) +
-                        _RES_RESOLUTION +
-                        "\n    Decoder: " + _DECODER +
-                        "\n    Encoder: {encoder} {pix_fmt}".format(encoder=_ENCODER, pix_fmt=_PIX_FMT) +
-                        "\n    Encoder Preset: " + _CODEC_PRESET +
-                        "\n    Hardware Acceleration: " + str(_HW_ENABLED) + '\n')
-    _RET = ffpb.main(_COMMAND, encoding='utf-8')
-    if _RET != 0:
-        print("压缩失败!")
+    if _BITRATE_V < _SKIP_MIN_BITRATE:
+        print("此视频比特率过低，跳过压制")
     else:
-        if charparser.Bool(_DEL_SRC):
-            os.remove(filepath)
+        print("开始压制视频...")
+        if charparser.Bool(_LOG_FILE_ENABLE):
+            _LOG_FILE.write("[" + str(task_cnt) + "] " + filepath +
+                            "\n    Compress Rate: {arg} {comp_value}".format(arg=_COMPRESS_ARG, comp_value=_COMPRESS_ARG_VALUE) +
+                            "\n    Framerate: " + _ORI_FRAMERATE + " -> " + _FRAMERATE +
+                            "\n    Resolution: {width}x{height} -> ".format(width=_SIZE[0], height=_SIZE[1]) +
+                            _RES_RESOLUTION +
+                            "\n    Decoder: " + _DECODER +
+                            "\n    Encoder: {encoder} {pix_fmt}".format(encoder=_ENCODER, pix_fmt=_PIX_FMT) +
+                            "\n    Encoder Preset: " + _CODEC_PRESET +
+                            "\n    Hardware Acceleration: " + str(_HW_ENABLED) + '\n')
+        _RET = ffpb.main(_COMMAND, encoding='utf-8')
+        if _RET != 0:
+            print("压制失败!")
+        else:
+            if charparser.Bool(_DEL_SRC):
+                os.remove(filepath)
     print()
 
 

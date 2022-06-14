@@ -12,7 +12,8 @@ class VideoConf:
                 'IO_FIX',
                 'IO_DIR',
                 'LOGGING',
-                'EXTRA']
+                'EXTRA',
+                'SKIP']
 
     CODEC_PRESET = ['ultrafast', 'superfast', 'veryfast', 'faster', 'fast', 'medium', 'slow', 'slower', 'veryslow']
 
@@ -46,7 +47,9 @@ class VideoConf:
                          'by \'[]\', such as \'[absolute]D:\\Videos\\Anime\'',
                          'Use [source] to mark output directory is same as input'],
                         ['[Optional] To save log for progress'],
-                        ['[Optional] Some extra settings', 'del_src: Delete original file when compress completed']]
+                        ['[Optional] Some extra settings', 'del_src: Delete original file when compress completed'],
+                        ['[Optional] Skip options',
+                         'min_skip_bitrate: If bitrate of video is lower than this option, will skip it']]
 
     SECTIONS_CONF_NAME = [['compress_arg', 'value'],
                           ['enable', 'value'],
@@ -58,7 +61,8 @@ class VideoConf:
                           ['prefix', 'suffix'],
                           ['input', 'output'],
                           ['enable', 'name'],
-                          ['del_src']]
+                          ['del_src'],
+                          ['min_bitrate']]
 
     SECTIONS_CONF_VALUE = [['crf', '23.5'],
                            ['False', '60'],
@@ -70,7 +74,8 @@ class VideoConf:
                            ['[compressed]', ''],
                            ['none', '[relative]out'],
                            ['False', 'log_video.txt'],
-                           ['False']]
+                           ['False'],
+                           ['0']]
 
 
 class ImageConf:
