@@ -12,6 +12,18 @@ def get_encoders():
     return encoders
 
 
+def get_video_stream_info(filepath):
+    f = ffmpeg.stream.Stream()
+    f.input(filepath)
+    streams = f.video_info().get('streams')
+    ret = streams[0]
+    for i in streams:
+        if i['codec_type'] == 'video':
+            ret = i
+            break
+    return ret
+
+
 class Info:
     fileSize = ''
     size = []
@@ -26,10 +38,8 @@ class Info:
         self.fileSize = str(round(size, 2)) + "MB"
 
     def __get_size(self, filepath):
-        f = ffmpeg.stream.Stream()
-        f.input(filepath)
-        self.size = [str(f.video_info().get('streams')[0]['width']),
-                     str(f.video_info().get('streams')[0]['height'])]
+        stream = get_video_stream_info(filepath)
+        self.size = [str(stream['width']), str(stream['height'])]
 
 
 class Video(Info):
@@ -42,14 +52,12 @@ class Video(Info):
         self.__get_framerate(filepath)
 
     def __get_bitrate(self, filepath):
-        f = ffmpeg.stream.Stream()
-        f.input(filepath)
-        self.bitrate = float(f.video_info().get('streams')[0]['bit_rate']) / 1000
+        stream = get_video_stream_info(filepath)
+        self.bitrate = float(stream['bit_rate']) / 1000
 
     def __get_framerate(self, filepath):
-        f = ffmpeg.stream.Stream()
-        f.input(filepath)
-        self.framerate = str(eval(f.video_info().get('streams')[0]['r_frame_rate']))
+        stream = get_video_stream_info(filepath)
+        self.framerate = str(stream['r_frame_rate'])
 
 
 class Image(Info):
