@@ -2,17 +2,18 @@ import os
 import platform
 import sys
 
-WIN32_SEP = "\\"
-WIN32_DOUBLE_SEP = WIN32_SEP + WIN32_SEP
-LINUX_DRAWIN_SEP = "/"
-
+WIN32_PLATFORM = 'win32'
 WIN32_EXECUTABLE_SUFFIX = '.exe'
+
+WIN32_SEP = "\\"
+LINUX_DRAWIN_SEP = "/"
 
 IS_WSL = os.getenv('WSL_DISTRO_NAME') is not None
 
+
 def get_default_execuatable_suffix():
     ret = []
-    if sys.platform == 'win32':
+    if sys.platform == WIN32_PLATFORM:
         ret.append(WIN32_EXECUTABLE_SUFFIX)
     else:
         ret.append('')
@@ -20,17 +21,20 @@ def get_default_execuatable_suffix():
         ret.append(WIN32_EXECUTABLE_SUFFIX)
     return ret
 
+
 def get_path_env_sep():
-    if sys.platform == 'win32':
+    if sys.platform == WIN32_PLATFORM:
         return ';'
     else:
         return ':'
 
+
 def get_sep():
-    if sys.platform == 'win32':
+    if sys.platform == WIN32_PLATFORM:
         return WIN32_SEP
     else:
         return LINUX_DRAWIN_SEP
+
 
 if len(sys.argv) != 2:
     print("Usage: python3 prog_scanner.py <program name>")
