@@ -24,32 +24,32 @@ def get_video_stream_info(filepath):
     return ret
 
 
-class Info:
-    fileSize = ''
-    size = []
+class FileInfo:
+    fileSize = 0
+    fileSizeStr = ''
 
     def __init__(self, filepath):
         self.__get_fileSize(filepath)
-        self.__get_size(filepath)
+        self.__get_fileSizeStr()
 
     def __get_fileSize(self, filepath):
         size = os.path.getsize(filepath)
-        size = size / float(1024 * 1024)
-        self.fileSize = str(round(size, 2)) + "MB"
+        self.fileSize = size / float(1024 * 1024)
 
-    def __get_size(self, filepath):
-        stream = get_video_stream_info(filepath)
-        self.size = [str(stream['width']), str(stream['height'])]
+    def __get_fileSizeStr(self):
+        self.fileSizeStr = str(round(self.fileSize, 2)) + "MB"
 
 
-class Video(Info):
+class Video(FileInfo):
     bitrate = ''
     framerate = ''
+    size = []
 
     def __init__(self, filepath):
         super().__init__(filepath)
         self.__get_bitrate(filepath)
         self.__get_framerate(filepath)
+        self.__get_size(filepath)
 
     def __get_bitrate(self, filepath):
         stream = get_video_stream_info(filepath)
@@ -59,7 +59,11 @@ class Video(Info):
         stream = get_video_stream_info(filepath)
         self.framerate = str(stream['r_frame_rate'])
 
+    def __get_size(self, filepath):
+        stream = get_video_stream_info(filepath)
+        self.size = [str(stream['width']), str(stream['height'])]
 
-class Image(Info):
+
+class Image(FileInfo):
     def __init__(self, filepath):
         super().__init__(filepath)

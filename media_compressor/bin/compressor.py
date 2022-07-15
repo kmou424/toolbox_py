@@ -236,9 +236,9 @@ def compress_image(config_parser: configparser.ConfigParser, filepath: str, task
         _LOG_FILE = open(os.getcwd() + charparser.get_path_delimiter() +
                          config_parser.get('LOGGING', 'name'), 'a', encoding='utf-8')
         _LOG_FILE.write("[" + str(task_cnt) + "]" + _OUTPUT_INFO.FILENAME_EXT + ": " +
-                        "\n    Input File Path: " + filepath + " (" + _IMAGE_INFO.fileSize + ")" +
+                        "\n    Input File Path: " + filepath + " (" + _IMAGE_INFO.fileSizeStr + ")" +
                         "\n    Output File Path: " + _OUTPUT_INFO.OUTPUT_DIR + charparser.get_path_delimiter() +
-                        _OUTPUT_INFO.FILENAME + '.' + _OUTPUT_INFO.OUTPUT_FORMAT + " (" + _IMAGE_OUT_INFO.fileSize +
+                        _OUTPUT_INFO.FILENAME + '.' + _OUTPUT_INFO.OUTPUT_FORMAT + " (" + _IMAGE_OUT_INFO.fileSizeStr +
                         ")" + '\n')
     if _RET != 0:
         print("压缩失败!")
