@@ -33,16 +33,15 @@ class CustomOut:
 
     @staticmethod
     def get_custom_color_cfg(display=IOColors.DISPLAY_DEFAULT, font=IOColors.FONT_WHITE,
-                             background=IOColors.BACKGROUND_BLACK) -> dict:
+                             background=1) -> dict:
         return {
             'display': display,
             'font': font,
             'background': background
         }
 
-    def set(self, content: str):
+    def __init__(self, content: str):
         self.__output = content
-        return self
 
     def build(self, color_cfg=None):
         if color_cfg is not None and type(dict()) == type(color_cfg):

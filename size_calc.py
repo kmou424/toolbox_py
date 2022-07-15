@@ -16,7 +16,8 @@ def get_all_files_size(files: list):
 
 def make_output_str(idx: int, param: dict, max_idx_width, max_size_width):
     return "{idx}{size}MB] {name}".format(
-        idx=('{:' + str(max_idx_width) + '}').format('[' + str(idx).zfill(max_idx_width - 3) + ']'),
+        idx=('{:' + str(max_idx_width) +
+             '}').format('[' + str(idx).zfill(max_idx_width - 3) + ']'),
         size=('{:' + str(max_size_width) + '}').format('[' + param['size']),
         name=param['name'])
 
@@ -73,14 +74,16 @@ for f in SURFACE_FILE_LIST:
             'dir': True,
             'size': get_all_files_size(SUB_FILE_LIST)
         })
-        size_max_width = max(len(str(DIRS_RES[-1]['size'])) + 1, size_max_width)
+        size_max_width = max(
+            len(str(DIRS_RES[-1]['size'])) + 1, size_max_width)
     if os.path.isfile(f):
         FILE_RES.append({
             'name': os.path.basename(f),
             'dir': False,
             'size': str(round(FileInfo(f).fileSize, 2))
         })
-        size_max_width = max(len(str(FILE_RES[-1]['size'])) + 1, size_max_width)
+        size_max_width = max(
+            len(str(FILE_RES[-1]['size'])) + 1, size_max_width)
 
 RES.extend(DIRS_RES)
 RES.extend(FILE_RES)
@@ -98,6 +101,6 @@ for i in range(0, len(RES)):
         font_color = IOColors.FONT_GREEN
     else:
         font_color = IOColors.FONT_WHITE
-    CustomOut().set(make_output_str(i + 1, RES[i], idx_max_width, size_max_width)).build(CustomOut.get_custom_color_cfg(
+    CustomOut(make_output_str(i + 1, RES[i], idx_max_width, size_max_width)).build(CustomOut.get_custom_color_cfg(
         IOColors.DISPLAY_DEFAULT, font_color, 1
     )).print()
