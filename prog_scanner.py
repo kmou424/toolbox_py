@@ -1,6 +1,7 @@
 import os
-import platform
 import sys
+
+from bin.io import CustomOut, IOColors
 
 WIN32_PLATFORM = 'win32'
 WIN32_EXECUTABLE_SUFFIX = '.exe'
@@ -60,6 +61,10 @@ if PROG_PATH is not None:
     print("找到程序%s" % PROG_NAME)
     print("路径: %s" % PROG_PATH)
     if PROG_PATH.endswith(WIN32_EXECUTABLE_SUFFIX) and IS_WSL:
-        print("警告: 此程序是在WSL环境下检测到的Windows可执行程序, 可能无法在此环境下正常运行")
+        CustomOut("警告: 此程序是在WSL环境下检测到的Windows可执行程序, 可能无法在此环境下正常运行").build(
+            CustomOut.get_custom_color_cfg(
+                display=IOColors.DISPLAY_DEFAULT,
+                font=IOColors.FONT_RED)
+        ).print()
 else:
     print("未找到程序%s" % PROG_NAME)
