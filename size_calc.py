@@ -99,5 +99,5 @@ for i in range(0, len(RES)):
     else:
         font_color = IOColors.FONT_WHITE
     CustomOut().set(make_output_str(i + 1, RES[i], idx_max_width, size_max_width)).build(CustomOut.get_custom_color_cfg(
-        IOColors.DISPLAY_DEFAULT, font_color, IOColors.DISPLAY_DEFAULT
+        IOColors.DISPLAY_DEFAULT, font_color, 1
     )).print()
