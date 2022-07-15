@@ -4,7 +4,7 @@ import configparser
 import sys
 
 from default import config
-from bin import filequery, charparser, compressor
+from modules import filequery, charparser, compressor
 from pathlib import Path
 
 config_parser = configparser.ConfigParser()
@@ -25,7 +25,8 @@ def createConfByDefault(preset, conf_path):
     for i in range(len(preset.SECTIONS)):
         config_parser.add_section(preset.SECTIONS[i])
         for j in range(len(preset.SECTIONS_CONF_NAME[i])):
-            config_parser.set(preset.SECTIONS[i], preset.SECTIONS_CONF_NAME[i][j], preset.SECTIONS_CONF_VALUE[i][j])
+            config_parser.set(
+                preset.SECTIONS[i], preset.SECTIONS_CONF_NAME[i][j], preset.SECTIONS_CONF_VALUE[i][j])
     config_parser.write(open(conf_path, 'w', encoding='utf-8'))
     for i in range(len(preset.SECTIONS)):
         for comment in preset.SECTIONS_COMMENT[i]:
@@ -75,10 +76,12 @@ if not Path(_CONFIG_PATH).exists():
 config_parser.read(_CONFIG_PATH, 'utf-8')
 
 _INPUT_FORMAT = config_parser.get('IO_FORMAT', 'input').split('|')
-_INPUT_DIR = charparser.parse_path(config_parser.get('IO_DIR', 'input'), os.getcwd())
+_INPUT_DIR = charparser.parse_path(
+    config_parser.get('IO_DIR', 'input'), os.getcwd())
 if _INPUT_DIR == 'none':
     _INPUT_DIR = os.getcwd()
-_FILE_LIST = filequery.search_by_ext(filequery.list_all_files(_INPUT_DIR), _INPUT_FORMAT)
+_FILE_LIST = filequery.search_by_ext(
+    filequery.list_all_files(_INPUT_DIR), _INPUT_FORMAT)
 
 TASK_CNT = 0
 for FILE in _FILE_LIST:

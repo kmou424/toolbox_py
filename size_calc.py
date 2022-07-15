@@ -1,9 +1,9 @@
 import os
 import sys
 
-from bin import filequery
-from bin.info_utils import FileInfo
-from bin.io import CustomOut, IOColors
+from modules import filequery
+from modules.info_utils import FileInfo
+from modules.io import CustomOut, IOColors
 
 
 def get_all_files_size(files: list):

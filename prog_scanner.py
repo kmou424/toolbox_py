@@ -1,7 +1,7 @@
 import os
 import sys
 
-from bin.io import CustomOut, IOColors
+from modules.io import CustomOut, IOColors
 
 WIN32_PLATFORM = 'win32'
 WIN32_EXECUTABLE_SUFFIX = '.exe'
