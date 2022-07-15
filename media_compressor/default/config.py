@@ -82,7 +82,8 @@ class ImageConf:
     SECTIONS = ['TARGET_QUALITY',
                 'IO_FORMAT',
                 'IO_DIR',
-                'LOGGING']
+                'LOGGING',
+                'EXTRA']
 
     SECTIONS_COMMENT = [['Set target quality to compress image (1 - 50)',
                          'notes: A larger number corresponds to a lower quality.'],
@@ -92,14 +93,17 @@ class ImageConf:
                          '[Important] You must use \'absolute\' or \'relative\' to mark it is a absolute path or yet'
                          'by \'[]\', such as \'[absolute]D:\\Videos\\Anime\'',
                          'Use [source] to mark output directory is same as input'],
-                        ['[Optional] To save log for progress']]
+                        ['[Optional] To save log for progress'],
+                        ['[Optional] Some extra settings', 'del_src: Delete original file when compress completed']]
 
     SECTIONS_CONF_NAME = [['value'],
                           ['input', 'output'],
                           ['input', 'output'],
-                          ['enable', 'name']]
+                          ['enable', 'name'],
+                          ['del_src']]
 
     SECTIONS_CONF_VALUE = [['2'],
                            ['jpg|png', 'jpg'],
                            ['none', '[relative]out'],
-                           ['True', 'log_image.txt']]
+                           ['True', 'log_image.txt'],
+                           ['False']]

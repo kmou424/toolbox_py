@@ -47,7 +47,7 @@ def compress_video(config_parser: configparser.ConfigParser, filepath: str, task
     _COMMAND = []
     # Decoder
     _DECODER_ENABLED = config_parser.get('TARGET_DECODER', 'enable')
-    _DECODER = 'None'
+    _DECODER = 'Default'
     if charparser.Bool(_DECODER_ENABLED):
         _HWACCEL = config_parser.get('TARGET_DECODER', 'hwaccel')
         _DECODER = config_parser.get('TARGET_DECODER', 'decoder')
@@ -217,15 +217,19 @@ def compress_image(config_parser: configparser.ConfigParser, filepath: str, task
     _COMMAND.append(_OUTPUT_INFO.OUTPUT_DIR + charparser.get_path_delimiter() +
                     _OUTPUT_INFO.FILENAME + '.' + _OUTPUT_INFO.OUTPUT_FORMAT)
 
+    # EXTRA
+    _DEL_SRC = config_parser.get('EXTRA', 'del_src')
+
     print()
     print("当前工作路径: " + os.getcwd())
     print("第" + str(task_cnt) + "个图片处理任务")
     print("输入文件名: " + _OUTPUT_INFO.FILENAME_EXT)
     print("输出文件名: " + _OUTPUT_INFO.FILENAME + '.' + _OUTPUT_INFO.OUTPUT_FORMAT)
     print("压缩质量: " + _QUALITY)
-    ffpb.main(_COMMAND, encoding='utf-8')
+    _RET = ffpb.main(_COMMAND, encoding='utf-8')
     _IMAGE_OUT_INFO = info_utils.Image(_OUTPUT_INFO.OUTPUT_DIR + charparser.get_path_delimiter() +
                                        _OUTPUT_INFO.FILENAME + '.' + _OUTPUT_INFO.OUTPUT_FORMAT)
+
     _LOG_FILE_ENABLE = config_parser.get('LOGGING', 'enable')
     _LOG_FILE = ''
     if charparser.Bool(_LOG_FILE_ENABLE):
@@ -235,5 +239,10 @@ def compress_image(config_parser: configparser.ConfigParser, filepath: str, task
                         "\n    Input File Path: " + filepath + " (" + _IMAGE_INFO.fileSize + ")" +
                         "\n    Output File Path: " + _OUTPUT_INFO.OUTPUT_DIR + charparser.get_path_delimiter() +
                         _OUTPUT_INFO.FILENAME + '.' + _OUTPUT_INFO.OUTPUT_FORMAT + " (" + _IMAGE_OUT_INFO.fileSize +
-                        ")\n")
+                        ")" + '\n')
+    if _RET != 0:
+        print("压缩失败!")
+    else:
+        if charparser.Bool(_DEL_SRC):
+            os.remove(filepath)
     print()
