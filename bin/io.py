@@ -32,7 +32,7 @@ class CustomOut:
     __output = ''
 
     @staticmethod
-    def get_custom_color_cfg(self, display=IOColors.DISPLAY_DEFAULT, font=IOColors.FONT_WHITE,
+    def get_custom_color_cfg(display=IOColors.DISPLAY_DEFAULT, font=IOColors.FONT_WHITE,
                              background=IOColors.BACKGROUND_BLACK) -> dict:
         return {
             'display': display,
