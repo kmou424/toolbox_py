@@ -179,7 +179,7 @@ def compress_video(config_parser: configparser.ConfigParser, filepath: str, task
     _LOG_FILE = ''
     if charparser.Bool(_LOG_FILE_ENABLE):
         _LOG_FILE = open(os.getcwd() + charparser.get_path_delimiter() +
-                         config_parser.get('LOGGING', 'name'), 'a')
+                         config_parser.get('LOGGING', 'name'), 'a', encoding='utf-8')
 
     if _BITRATE_V < _SKIP_MIN_BITRATE:
         print("此视频比特率过低，跳过压制")
@@ -234,7 +234,7 @@ def compress_image(config_parser: configparser.ConfigParser, filepath: str, task
     _LOG_FILE = ''
     if charparser.Bool(_LOG_FILE_ENABLE):
         _LOG_FILE = open(os.getcwd() + charparser.get_path_delimiter() +
-                         config_parser.get('LOGGING', 'name'), 'a')
+                         config_parser.get('LOGGING', 'name'), 'a', encoding='utf-8')
         _LOG_FILE.write("[" + str(task_cnt) + "]" + _OUTPUT_INFO.FILENAME_EXT + ": " +
                         "\n    Input File Path: " + filepath + " (" + _IMAGE_INFO.fileSize + ")" +
                         "\n    Output File Path: " + _OUTPUT_INFO.OUTPUT_DIR + charparser.get_path_delimiter() +
