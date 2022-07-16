@@ -1,4 +1,4 @@
-from bin import info_utils
+from modules import info_utils
 
 
 class VideoConf:
@@ -15,7 +15,8 @@ class VideoConf:
                 'EXTRA',
                 'SKIP']
 
-    CODEC_PRESET = ['ultrafast', 'superfast', 'veryfast', 'faster', 'fast', 'medium', 'slow', 'slower', 'veryslow']
+    CODEC_PRESET = ['ultrafast', 'superfast', 'veryfast',
+                    'faster', 'fast', 'medium', 'slow', 'slower', 'veryslow']
 
     SECTIONS_COMMENT = [['Set target compress rate for your video', 'compress_arg: \'crf\' or \'qp\'',
                          'You can type 0-51, 0 is lossless, 18 is visually lossless',
@@ -29,7 +30,8 @@ class VideoConf:
                          'If you not using nVidia Graphics, you should change this option'],
                         ['Set encoder to convert your video',
                          'Suggest options: ' + "libx264, libx265",
-                         'Available options: ' + ', '.join(info_utils.get_encoders()),
+                         'Available options: ' +
+                         ', '.join(info_utils.get_encoders()),
                          'Note: Encoders ending in *_nvenc are supported GPU',
                          'custom_yuv_pix_fmt: If you want to customize the color space and bit depth of the yuv color'
                          ' encoder, please enable this option',
@@ -47,7 +49,8 @@ class VideoConf:
                          'by \'[]\', such as \'[absolute]D:\\Videos\\Anime\'',
                          'Use [source] to mark output directory is same as input'],
                         ['[Optional] To save log for progress'],
-                        ['[Optional] Some extra settings', 'del_src: Delete original file when compress completed'],
+                        ['[Optional] Some extra settings',
+                            'del_src: Delete original file when compress completed'],
                         ['[Optional] Skip options',
                          'min_skip_bitrate: If bitrate of video is lower than this option, will skip it']]
 
@@ -55,7 +58,8 @@ class VideoConf:
                           ['enable', 'value'],
                           ['enable', 'value'],
                           ['enable', 'hwaccel', 'decoder'],
-                          ['encoder', 'custom_yuv_pix_fmt', 'yuv_colorspace', 'yuv_bit_depth'],
+                          ['encoder', 'custom_yuv_pix_fmt',
+                              'yuv_colorspace', 'yuv_bit_depth'],
                           ['enable', 'value'],
                           ['input', 'output'],
                           ['prefix', 'suffix'],
