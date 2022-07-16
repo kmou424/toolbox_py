@@ -41,27 +41,29 @@ class FileInfo:
 
 
 class Video(FileInfo):
-    bitrate = ''
-    framerate = ''
-    size = []
+    stream: dict = None
+    bitrate: float = None
+    framerate: str = None
+    size: list = None
 
     def __init__(self, filepath):
         super().__init__(filepath)
-        self.__get_bitrate(filepath)
-        self.__get_framerate(filepath)
-        self.__get_size(filepath)
+        self.stream = get_video_stream_info(filepath)
+        self.__get_bitrate()
+        self.__get_framerate()
+        self.__get_size()
 
-    def __get_bitrate(self, filepath):
-        stream = get_video_stream_info(filepath)
-        self.bitrate = float(stream['bit_rate']) / 1000
+    def __get_bitrate(self):
+        if 'bit_rate' in self.stream.keys():
+            self.bitrate = float(self.stream['bit_rate']) / 1000
 
-    def __get_framerate(self, filepath):
-        stream = get_video_stream_info(filepath)
-        self.framerate = str(stream['r_frame_rate'])
+    def __get_framerate(self):
+        if 'r_frame_rate' in self.stream.keys():
+            self.framerate = str(self.stream['r_frame_rate'])
 
-    def __get_size(self, filepath):
-        stream = get_video_stream_info(filepath)
-        self.size = [str(stream['width']), str(stream['height'])]
+    def __get_size(self):
+        if 'width' in self.stream.keys() and 'height' in self.stream.keys():
+            self.size = [str(self.stream['width']), str(self.stream['height'])]
 
 
 class Image(FileInfo):

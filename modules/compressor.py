@@ -3,7 +3,7 @@ import os
 import configparser
 import ffpb
 
-from bin import charparser, info_utils
+from modules import charparser, info_utils
 from default import config
 from pathlib import Path
 
@@ -15,7 +15,8 @@ class __CommonOutput:
     FILENAME = ''
 
     def __init__(self, config_parser: configparser.ConfigParser, filepath: str):
-        self.OUTPUT_DIR = charparser.parse_path(config_parser.get('IO_DIR', 'output'), filepath)
+        self.OUTPUT_DIR = charparser.parse_path(
+            config_parser.get('IO_DIR', 'output'), filepath)
         if not Path(self.OUTPUT_DIR).exists():
             os.makedirs(self.OUTPUT_DIR)
         self.OUTPUT_FORMAT = config_parser.get('IO_FORMAT', 'output')
@@ -66,19 +67,27 @@ def compress_video(config_parser: configparser.ConfigParser, filepath: str, task
         _COMPRESS_ARG = 'None'
         _COMPRESS_ARG_VALUE = 'None'
     # Framerate
-    _FRAMERATE = config_parser.get('TARGET_FRAMERATE', 'enable')
-    _ORI_FRAMERATE = _VIDEO_INFO.framerate + ' fps'
-    if charparser.Bool(_FRAMERATE):
-        _FRAMERATE = config_parser.get('TARGET_FRAMERATE', 'value')
-        addCommand(_COMMAND, '-r', _FRAMERATE)
-        _FRAMERATE += ' fps'
+    _SRC_FRAMERATE = _VIDEO_INFO.framerate
+    _SRC_FRAMERATE_DISPLAY = "Unknown"
+    _RES_FRAMERATE_ENABLED = config_parser.get('TARGET_FRAMERATE', 'enable')
+    if _SRC_FRAMERATE is not None:
+        _SRC_FRAMERATE_DISPLAY = str(_SRC_FRAMERATE) + 'fps'
+    _RES_FRAMERATE_DISPLAY = _SRC_FRAMERATE_DISPLAY
+    if _SRC_FRAMERATE is not None and charparser.Bool(_RES_FRAMERATE_ENABLED):
+        _RES_FRAMERATE = config_parser.get('TARGET_FRAMERATE', 'value')
+        addCommand(_COMMAND, '-r', _RES_FRAMERATE)
+        _RES_FRAMERATE_DISPLAY += ' fps'
     else:
-        _FRAMERATE = _ORI_FRAMERATE + '(none)'
+        _RES_FRAMERATE_DISPLAY += '(Unchanged)'
 
     # Quality
     _QUALITY = config_parser.get('TARGET_QUALITY', 'enable')
-    _RES_RESOLUTION = "{width}x{height}".format(width=_SIZE[0], height=_SIZE[1])
-    if charparser.Bool(_QUALITY):
+    _SRC_RESOLUTION_DISPLAY = "Unknown"
+    if _SIZE is not None:
+        _SRC_RESOLUTION_DISPLAY = "{width}x{height}".format(
+            width=_SIZE[0], height=_SIZE[1])
+    _RES_RESOLUTION_DISPLAY = _SRC_RESOLUTION_DISPLAY
+    if _SIZE is not None and charparser.Bool(_QUALITY):
         _QUALITY_VALUE = float(config_parser.get('TARGET_QUALITY', 'value'))
         _WIDTH = float(_SIZE[0])
         _HEIGHT = float(_SIZE[1])
@@ -94,13 +103,16 @@ def compress_video(config_parser: configparser.ConfigParser, filepath: str, task
                 _ZOOM_RATIO = _QUALITY_VALUE / _HEIGHT
                 _HEIGHT = _QUALITY_VALUE
                 _WIDTH = _WIDTH * _ZOOM_RATIO
-        addCommand(_COMMAND, '-vf', 'scale=' + str(_WIDTH) + ':' + str(_HEIGHT))
-        _RES_RESOLUTION = "{width}x{height}".format(width=int(_WIDTH), height=int(_HEIGHT))
+        addCommand(_COMMAND, '-vf', 'scale=' +
+                   str(_WIDTH) + ':' + str(_HEIGHT))
+        _RES_RESOLUTION_DISPLAY = "{width}x{height}".format(
+            width=int(_WIDTH), height=int(_HEIGHT))
 
     # Encoder
     _HW_ENABLED = False
     _ENCODER = config_parser.get('TARGET_ENCODER', 'encoder')
-    _CUSTOM_YUV_PIX_FMT = config_parser.get('TARGET_ENCODER', 'custom_yuv_pix_fmt')
+    _CUSTOM_YUV_PIX_FMT = config_parser.get(
+        'TARGET_ENCODER', 'custom_yuv_pix_fmt')
     _BIT_DEPTH = config_parser.get('TARGET_ENCODER', 'yuv_bit_depth')
     if _BIT_DEPTH == '10':
         _BIT_DEPTH = '10le'
@@ -156,23 +168,31 @@ def compress_video(config_parser: configparser.ConfigParser, filepath: str, task
     _SKIP_MIN_BITRATE = int(config_parser.get('SKIP', 'min_bitrate'))
 
     _BITRATE_V = _VIDEO_INFO.bitrate
+    _BITRATE_DISPLAY = str(_BITRATE_V) + ' kbps'
+
+    if _BITRATE_V is None:
+        _BITRATE_DISPLAY = 'Unknown'
 
     print()
     print("当前工作路径: " + os.getcwd())
     print("第" + str(task_cnt) + "个视频处理任务")
     print("输入文件名: " + _OUTPUT_INFO.FILENAME_EXT)
     print("输出文件名: {prefix}{filename}{suffix}.{format}".format(
-                            prefix=_PREFIX,
-                            filename=_OUTPUT_INFO.FILENAME,
-                            suffix=_SUFFIX,
-                            format=_OUTPUT_INFO.OUTPUT_FORMAT))
+        prefix=_PREFIX,
+        filename=_OUTPUT_INFO.FILENAME,
+        suffix=_SUFFIX,
+        format=_OUTPUT_INFO.OUTPUT_FORMAT))
     print("输出位置: " + _OUTPUT_INFO.OUTPUT_DIR)
-    print("视频码率: " + str(_BITRATE_V) + "k")
-    print("视频帧率: " + _FRAMERATE)
-    print("压缩方法和压缩率: {arg} {comp_value}".format(arg=_COMPRESS_ARG, comp_value=_COMPRESS_ARG_VALUE))
-    print("分辨率: {width}x{height} -> ".format(width=_SIZE[0], height=_SIZE[1]) + _RES_RESOLUTION)
+    print("视频码率: " + _BITRATE_DISPLAY)
+    print("视频帧率: {src} -> {res}".format(src=_SRC_FRAMERATE_DISPLAY,
+          res=_RES_FRAMERATE_DISPLAY))
+    print("压缩方法和压缩率: {arg} {comp_value}".format(
+        arg=_COMPRESS_ARG, comp_value=_COMPRESS_ARG_VALUE))
+    print(
+        "分辨率: {src} -> {res}".format(src=_SRC_RESOLUTION_DISPLAY, res=_RES_RESOLUTION_DISPLAY))
     print("解码器: " + _DECODER)
-    print("编码器: {encoder} {pix_fmt}".format(encoder=_ENCODER, pix_fmt=_PIX_FMT))
+    print("编码器: {encoder} {pix_fmt}".format(
+        encoder=_ENCODER, pix_fmt=_PIX_FMT))
     print("编码器预设: " + _CODEC_PRESET)
     print("硬件加速: " + str(_HW_ENABLED))
     _LOG_FILE_ENABLE = config_parser.get('LOGGING', 'enable')
@@ -181,16 +201,15 @@ def compress_video(config_parser: configparser.ConfigParser, filepath: str, task
         _LOG_FILE = open(os.getcwd() + charparser.get_path_delimiter() +
                          config_parser.get('LOGGING', 'name'), 'a', encoding='utf-8')
 
-    if _BITRATE_V < _SKIP_MIN_BITRATE:
+    if _BITRATE_V is not None and _BITRATE_V < _SKIP_MIN_BITRATE:
         print("此视频比特率过低，跳过压制")
     else:
         print("开始压制视频...")
         if charparser.Bool(_LOG_FILE_ENABLE):
             _LOG_FILE.write("[" + str(task_cnt) + "] " + filepath +
                             "\n    Compress Rate: {arg} {comp_value}".format(arg=_COMPRESS_ARG, comp_value=_COMPRESS_ARG_VALUE) +
-                            "\n    Framerate: " + _ORI_FRAMERATE + " -> " + _FRAMERATE +
-                            "\n    Resolution: {width}x{height} -> ".format(width=_SIZE[0], height=_SIZE[1]) +
-                            _RES_RESOLUTION +
+                            "\n    Framerate: " + _SRC_FRAMERATE_DISPLAY + " -> " + _RES_FRAMERATE_DISPLAY +
+                            "\n    Resolution: {src} -> {res}".format(src=_SRC_RESOLUTION_DISPLAY, res=_RES_RESOLUTION_DISPLAY) +
                             "\n    Decoder: " + _DECODER +
                             "\n    Encoder: {encoder} {pix_fmt}".format(encoder=_ENCODER, pix_fmt=_PIX_FMT) +
                             "\n    Encoder Preset: " + _CODEC_PRESET +
