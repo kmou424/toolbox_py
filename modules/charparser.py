@@ -3,10 +3,9 @@ import sys
 
 
 def Bool(value: str):
-    value = value.lower()
-    if value == 'true':
+    if value.lower() == 'true':
         return True
-    elif value == 'false':
+    elif value.lower() == 'false':
         return False
     else:
         print("error: \"" + value +
