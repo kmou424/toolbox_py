@@ -3,6 +3,7 @@ import os
 
 # [文件整理]用于批量自动重命名夜樱字幕组的作品
 
+
 def check_similarity(str1: str, str2: str, similarity: int):
     simi = find_max_common_substr(str1, str2)
     return len(simi) > similarity
@@ -28,7 +29,8 @@ def get_path_delimiter():
     elif 'mac' in sys.platform or 'linux' in sys.platform:
         return '/'
     else:
-        print("error: Unrecognized platform " + sys.platform + " or not support")
+        print("error: Unrecognized platform " +
+              sys.platform + " or not support")
         exit(1)
 
 
@@ -61,7 +63,8 @@ def renameAnimeDir(path: str):
                 if dir_list[_i] != os.path.basename(path):
                     cmp_str = dir_list[_i]
         if cmp_str != os.path.basename(path) and cmp_str != "":
-            max_common_substr = find_max_common_substr(cmp_str, os.path.basename(path))
+            max_common_substr = find_max_common_substr(
+                cmp_str, os.path.basename(path))
 
             if max_common_substr.startswith(']') or max_common_substr.startswith('}'):
                 max_common_substr = max_common_substr[1:]
@@ -82,5 +85,7 @@ DIR_LIST = os.listdir(PWD)
 
 for i in DIR_LIST:
     print()
-    print("Processing: {root}{delimiter}{dir}".format(root=PWD, delimiter=get_path_delimiter(), dir=i))
-    renameAnimeDir("{root}{delimiter}{dir}".format(root=PWD, delimiter=get_path_delimiter(), dir=i))
+    print("Processing: {root}{delimiter}{dir}".format(
+        root=PWD, delimiter=get_path_delimiter(), dir=i))
+    renameAnimeDir("{root}{delimiter}{dir}".format(
+        root=PWD, delimiter=get_path_delimiter(), dir=i))

@@ -8,7 +8,8 @@ def get_encoders():
     encoders = []
     for line in res.readlines():
         if 'encoders' in line:
-            encoders.extend(line[line.rfind('encoders:') + 10:len(line) - 3].split(' '))
+            encoders.extend(
+                line[line.rfind('encoders:') + 10:len(line) - 3].split(' '))
     return encoders
 
 
