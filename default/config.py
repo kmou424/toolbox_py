@@ -7,7 +7,6 @@ class VideoConf:
                 'TARGET_QUALITY',
                 'TARGET_DECODER',
                 'TARGET_ENCODER',
-                'TARGET_ENCODER_PRESET',
                 'IO_FORMAT',
                 'IO_FIX',
                 'IO_DIR',
@@ -15,10 +14,7 @@ class VideoConf:
                 'EXTRA',
                 'SKIP']
 
-    CODEC_PRESET = ['ultrafast', 'superfast', 'veryfast',
-                    'faster', 'fast', 'medium', 'slow', 'slower', 'veryslow']
-
-    SECTIONS_COMMENT = [['Set target compress rate for your video', 'compress_arg: \'crf\' or \'qp\'',
+    SECTIONS_COMMENT = [['Set target compress rate for your video', 'compress_arg: \'crf\' or \'cq\'',
                          'You can type 0-51, 0 is lossless, 18 is visually lossless',
                          'Note: 18-28 is recommended, we mostly choose 23.5'],
                         ['[Optional] Set target framerate for your video'],
@@ -32,15 +28,7 @@ class VideoConf:
                          'Suggest options: ' + "libx264, libx265",
                          'Available options: ' +
                          ', '.join(info_utils.get_encoders()),
-                         'Note: Encoders ending in *_nvenc are supported GPU',
-                         'custom_yuv_pix_fmt: If you want to customize the color space and bit depth of the yuv color'
-                         ' encoder, please enable this option',
-                         'If you don\'t know what it means, Google it or disable it',
-                         '[Warning] Hardware Acceleration is not support 422 color space and 10bit of yuv',
-                         'yuv_colorspace: 420 422 444',
-                         'yuv_bit_depth: 8 10'],
-                        ['Set ffmpeg preset for codec (control progress speed and quality of output video)',
-                         'Available options: ' + ', '.join(CODEC_PRESET)],
+                         'Note: Encoders ending in *_nvenc are supported GPU'],
                         ['Scan video files as below extension name (split as \'|\')'],
                         ['Prefix and suffix for output file'],
                         ['Output video files extension name (follow codec of your choice)',
@@ -58,9 +46,7 @@ class VideoConf:
                           ['enable', 'value'],
                           ['enable', 'value'],
                           ['enable', 'hwaccel', 'decoder'],
-                          ['encoder', 'custom_yuv_pix_fmt',
-                              'yuv_colorspace', 'yuv_bit_depth'],
-                          ['enable', 'value'],
+                          ['encoder'],
                           ['input', 'output'],
                           ['prefix', 'suffix'],
                           ['input', 'output'],
@@ -72,8 +58,7 @@ class VideoConf:
                            ['False', '60'],
                            ['False', '720'],
                            ['False', 'cuvid', 'h264_cuvid'],
-                           ['libx264', 'False', '420', '8'],
-                           ['True', 'medium'],
+                           ['libx264'],
                            ['mp4|mov', 'mp4'],
                            ['[compressed]', ''],
                            ['none', '[relative]out'],
