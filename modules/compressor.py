@@ -29,9 +29,15 @@ class __CommonOutput:
                 break
 
 
-def addCommand(command: list, option: str, value: str):
-    command.append(option)
-    command.append(value)
+ARGS = dict()
+
+
+def add_arg(option: str, value: str):
+    ARGS[option] = value
+
+
+def has_arg(option: str):
+    return option in ARGS
 
 
 def compress(config_parser: configparser.ConfigParser, filepath: str, task_cnt: int, compress_target: str):
@@ -44,29 +50,34 @@ def compress(config_parser: configparser.ConfigParser, filepath: str, task_cnt: 
 def compress_video(config_parser: configparser.ConfigParser, filepath: str, task_cnt: int):
     _VIDEO_INFO = info_utils.Video(filepath)
     _SIZE = _VIDEO_INFO.size
-    _COMMAND = []
     # Decoder
     _DECODER_ENABLED = config_parser.get('TARGET_DECODER', 'enable')
     _DECODER = 'Default'
     if charparser.Bool(_DECODER_ENABLED):
         _HWACCEL = config_parser.get('TARGET_DECODER', 'hwaccel')
         _DECODER = config_parser.get('TARGET_DECODER', 'decoder')
-        addCommand(_COMMAND, '-hwaccel', _HWACCEL)
-        addCommand(_COMMAND, '-c:v', _DECODER)
+        add_arg('-hwaccel', _HWACCEL)
+        add_arg('-c:v', _DECODER)
     # Input file
-    addCommand(_COMMAND, '-i', filepath)
+    add_arg('-i', filepath)
     # Compress arg
-    _COMPRESS_ARG = config_parser.get('TARGET_COMPRESS_RATE', 'compress_arg')
-    _COMPRESS_ARG_VALUE = config_parser.get('TARGET_COMPRESS_RATE', 'value')
-    if _COMPRESS_ARG == 'crf':
-        addCommand(_COMMAND, '-crf:v', _COMPRESS_ARG_VALUE)
-    if _COMPRESS_ARG == 'cq':
-        addCommand(_COMMAND, '-cq:v', str(int(float(_COMPRESS_ARG_VALUE))))
-        addCommand(_COMMAND, '-qmin', str(int(float(_COMPRESS_ARG_VALUE))))
-        addCommand(_COMMAND, '-qmax', str(int(float(_COMPRESS_ARG_VALUE))))
-    if _COMPRESS_ARG != 'cq' and _COMPRESS_ARG != 'crf':
-        _COMPRESS_ARG = 'None'
-        _COMPRESS_ARG_VALUE = 'None'
+    _COMPRESS_ARG_ENABLED = config_parser.get('TARGET_COMPRESS_RATE', 'enable')
+    _COMPRESS_ARG = 'None'
+    _COMPRESS_ARG_VALUE = 'None'
+    if charparser.Bool(_COMPRESS_ARG_ENABLED):
+        _COMPRESS_ARG = config_parser.get(
+            'TARGET_COMPRESS_RATE', 'compress_arg')
+        _COMPRESS_ARG_VALUE = config_parser.get(
+            'TARGET_COMPRESS_RATE', 'value')
+        if _COMPRESS_ARG == 'crf':
+            add_arg('-crf:v', _COMPRESS_ARG_VALUE)
+        if _COMPRESS_ARG == 'cq':
+            add_arg('-cq:v', str(int(float(_COMPRESS_ARG_VALUE))))
+            add_arg('-qmin', str(int(float(_COMPRESS_ARG_VALUE))))
+            add_arg('-qmax', str(int(float(_COMPRESS_ARG_VALUE))))
+        if _COMPRESS_ARG != 'cq' and _COMPRESS_ARG != 'crf':
+            _COMPRESS_ARG = 'None'
+            _COMPRESS_ARG_VALUE = 'None'
     # Framerate
     _SRC_FRAMERATE = _VIDEO_INFO.framerate
     _SRC_FRAMERATE_DISPLAY = "Unknown"
@@ -76,7 +87,7 @@ def compress_video(config_parser: configparser.ConfigParser, filepath: str, task
     _RES_FRAMERATE_DISPLAY = _SRC_FRAMERATE_DISPLAY
     if _SRC_FRAMERATE is not None and charparser.Bool(_RES_FRAMERATE_ENABLED):
         _RES_FRAMERATE = config_parser.get('TARGET_FRAMERATE', 'value')
-        addCommand(_COMMAND, '-r', _RES_FRAMERATE)
+        add_arg('-r', _RES_FRAMERATE)
         _RES_FRAMERATE_DISPLAY += ' fps'
     else:
         _RES_FRAMERATE_DISPLAY += '(Unchanged)'
@@ -104,8 +115,8 @@ def compress_video(config_parser: configparser.ConfigParser, filepath: str, task
                 _ZOOM_RATIO = _QUALITY_VALUE / _HEIGHT
                 _HEIGHT = _QUALITY_VALUE
                 _WIDTH = _WIDTH * _ZOOM_RATIO
-        addCommand(_COMMAND, '-vf', 'scale=' +
-                   str(_WIDTH) + ':' + str(_HEIGHT))
+        add_arg('-vf', 'scale=' +
+                str(_WIDTH) + ':' + str(_HEIGHT))
         _RES_RESOLUTION_DISPLAY = "{width}x{height}".format(
             width=int(_WIDTH), height=int(_HEIGHT))
 
@@ -113,41 +124,39 @@ def compress_video(config_parser: configparser.ConfigParser, filepath: str, task
     _HW_ENABLED = False
     _ENCODER = config_parser.get('TARGET_ENCODER', 'encoder')
     if _ENCODER in info_utils.get_encoders():
-        addCommand(_COMMAND, '-c:v', _ENCODER)
+        add_arg('-c:v', _ENCODER)
+        add_arg('-preset:v', 'slow')
         if _ENCODER.__contains__('nvenc')\
                 or _ENCODER.__contains__('qsv')\
                 or _ENCODER.__contains__('amf'):
             _HW_ENABLED = True
-            # 默认参数，无需再加
-            # addCommand(_COMMAND, '-preset:v', 'p4')
+            add_arg('-preset:v', 'p7')
     else:
         _ENCODER = _ENCODER + '(Invalid)'
 
     # Extra argument
-    # 影响编码速度，尚不明确作用
-    # addCommand(_COMMAND, '-multipass', 'fullres')
-    addCommand(_COMMAND, '-tier:v', 'high')
+    # add_arg('-multipass', 'fullres')
+    add_arg('-tier:v', 'high')
     if '480' in _RES_RESOLUTION_DISPLAY:
-        addCommand(_COMMAND, '-level:v', '3.1')
+        add_arg('-level:v', '3.1')
     if '720' in _RES_RESOLUTION_DISPLAY:
-        addCommand(_COMMAND, '-level:v', '4.2')
+        add_arg('-level:v', '4.2')
     if '1080' in _RES_RESOLUTION_DISPLAY:
-        addCommand(_COMMAND, '-level:v', '5.2')
+        add_arg('-level:v', '5.2')
     if '2160' in _RES_RESOLUTION_DISPLAY:
-        addCommand(_COMMAND, '-level:v', '6.2')
-    addCommand(_COMMAND, '-rc:v', 'vbr')
+        add_arg('-level:v', '6.2')
+    add_arg('-rc:v', 'vbr')
 
     # Output file
     _OUTPUT_INFO = __CommonOutput(config_parser, filepath)
     _PREFIX = config_parser.get('IO_FIX', 'prefix')
     _SUFFIX = config_parser.get('IO_FIX', 'suffix')
-    _COMMAND.append("{dir}{delimiter}{prefix}{filename}{suffix}.{format}"
-                    .format(dir=_OUTPUT_INFO.OUTPUT_DIR,
-                            delimiter=charparser.get_path_delimiter(),
-                            prefix=_PREFIX,
-                            filename=_OUTPUT_INFO.FILENAME,
-                            suffix=_SUFFIX,
-                            format=_OUTPUT_INFO.OUTPUT_FORMAT))
+    OUT_FILEPATH = "{dir}{delimiter}{prefix}{filename}{suffix}.{format}".format(dir=_OUTPUT_INFO.OUTPUT_DIR,
+                                                                                delimiter=charparser.get_path_delimiter(),
+                                                                                prefix=_PREFIX,
+                                                                                filename=_OUTPUT_INFO.FILENAME,
+                                                                                suffix=_SUFFIX,
+                                                                                format=_OUTPUT_INFO.OUTPUT_FORMAT)
 
     # EXTRA
     _DEL_SRC = config_parser.get('EXTRA', 'del_src')
@@ -199,6 +208,12 @@ def compress_video(config_parser: configparser.ConfigParser, filepath: str, task
                             "\n    Decoder: " + _DECODER +
                             "\n    Encoder: {encoder}".format(encoder=_ENCODER) +
                             "\n    Hardware Acceleration: " + str(_HW_ENABLED) + '\n')
+        _COMMAND = []
+        for key in ARGS:
+            _COMMAND.append(key)
+            _COMMAND.append(ARGS[key])
+        _COMMAND.append(OUT_FILEPATH)
+        print(' '.join(_COMMAND))
         _RET = ffpb.main(_COMMAND, encoding='utf-8')
         if _RET != 0:
             print("压制失败!")
@@ -212,10 +227,10 @@ def compress_image(config_parser: configparser.ConfigParser, filepath: str, task
     _IMAGE_INFO = info_utils.Image(filepath)
     _COMMAND = []
     # Input file
-    addCommand(_COMMAND, '-i', filepath)
+    add_arg('-i', filepath)
     # Quality
     _QUALITY = config_parser.get('TARGET_QUALITY', 'value')
-    addCommand(_COMMAND, '-q:v', _QUALITY)
+    add_arg('-q:v', _QUALITY)
     # Output file
     _OUTPUT_INFO = __CommonOutput(config_parser, filepath)
     _COMMAND.append(_OUTPUT_INFO.OUTPUT_DIR + charparser.get_path_delimiter() +
@@ -230,7 +245,7 @@ def compress_image(config_parser: configparser.ConfigParser, filepath: str, task
     print("输入文件名: " + _OUTPUT_INFO.FILENAME_EXT)
     print("输出文件名: " + _OUTPUT_INFO.FILENAME + '.' + _OUTPUT_INFO.OUTPUT_FORMAT)
     print("压缩质量: " + _QUALITY)
-    _RET = ffpb.main(_COMMAND, encoding='utf-8')
+    _RET = ffpb.main(encoding='utf-8')
     _IMAGE_OUT_INFO = info_utils.Image(_OUTPUT_INFO.OUTPUT_DIR + charparser.get_path_delimiter() +
                                        _OUTPUT_INFO.FILENAME + '.' + _OUTPUT_INFO.OUTPUT_FORMAT)
 

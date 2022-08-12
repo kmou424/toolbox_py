@@ -42,7 +42,7 @@ class VideoConf:
                         ['[Optional] Skip options',
                          'min_skip_bitrate: If bitrate of video is lower than this option, will skip it']]
 
-    SECTIONS_CONF_NAME = [['compress_arg', 'value'],
+    SECTIONS_CONF_NAME = [['enable', 'compress_arg', 'value'],
                           ['enable', 'value'],
                           ['enable', 'value'],
                           ['enable', 'hwaccel', 'decoder'],
@@ -54,7 +54,7 @@ class VideoConf:
                           ['del_src'],
                           ['min_bitrate']]
 
-    SECTIONS_CONF_VALUE = [['crf', '23.5'],
+    SECTIONS_CONF_VALUE = [['True', 'crf', '23.5'],
                            ['False', '60'],
                            ['False', '720'],
                            ['False', 'cuvid', 'h264_cuvid'],
