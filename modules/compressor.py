@@ -213,7 +213,7 @@ def compress_video(config_parser: configparser.ConfigParser, filepath: str, task
             _COMMAND.append(key)
             _COMMAND.append(ARGS[key])
         _COMMAND.append(OUT_FILEPATH)
-        print(' '.join(_COMMAND))
+        print('Shell Args: ' + ' '.join(_COMMAND))
         _RET = ffpb.main(_COMMAND, encoding='utf-8')
         if _RET != 0:
             print("压制失败!")
