@@ -1,3 +1,4 @@
+from multiprocessing import cpu_count
 import os
 
 import configparser
@@ -160,6 +161,11 @@ def compress_video(config_parser: configparser.ConfigParser, filepath: str, task
 
     # EXTRA
     _DEL_SRC = config_parser.get('EXTRA', 'del_src')
+    _THREADS = config_parser.get('EXTRA', 'threads')
+    if _THREADS.isdigit() and cpu_count() >= int(_THREADS) >= 1:
+        add_arg('-threads', _THREADS)
+    else:
+        _THREADS += '(Invalid)'
 
     # SKIP
     _SKIP_MIN_BITRATE = int(config_parser.get('SKIP', 'min_bitrate'))
@@ -190,6 +196,7 @@ def compress_video(config_parser: configparser.ConfigParser, filepath: str, task
     print("解码器: " + _DECODER)
     print("编码器: {encoder}".format(encoder=_ENCODER))
     print("硬件加速: " + str(_HW_ENABLED))
+    print("线程数: " + _THREADS)
     _LOG_FILE_ENABLE = config_parser.get('LOGGING', 'enable')
     _LOG_FILE = ''
     if charparser.Bool(_LOG_FILE_ENABLE):

@@ -38,7 +38,8 @@ class VideoConf:
                          'Use [source] to mark output directory is same as input'],
                         ['[Optional] To save log for progress'],
                         ['[Optional] Some extra settings',
-                            'del_src: Delete original file when compress completed'],
+                            'del_src: Delete original file when compress completed',
+                            'threads: Number of threads to use'],
                         ['[Optional] Skip options',
                          'min_skip_bitrate: If bitrate of video is lower than this option, will skip it']]
 
@@ -51,7 +52,7 @@ class VideoConf:
                           ['prefix', 'suffix'],
                           ['input', 'output'],
                           ['enable', 'name'],
-                          ['del_src'],
+                          ['del_src', 'threads'],
                           ['min_bitrate']]
 
     SECTIONS_CONF_VALUE = [['True', 'crf', '23.5'],
@@ -63,7 +64,7 @@ class VideoConf:
                            ['[compressed]', ''],
                            ['none', '[relative]out'],
                            ['False', 'log_video.txt'],
-                           ['False'],
+                           ['False', '1'],
                            ['0']]
 
 
