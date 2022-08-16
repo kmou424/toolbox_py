@@ -243,14 +243,14 @@ def compress_image(config_parser: configparser.ConfigParser, filepath: str, task
     OUT_FILEPATH = _OUTPUT_INFO.OUTPUT_DIR + charparser.get_path_delimiter() + \
         _OUTPUT_INFO.FILENAME + '.' + _OUTPUT_INFO.OUTPUT_FORMAT
 
-    # Quality
-    _QUALITY = config_parser.get('TARGET_RESOLUTION', 'enable')
+    # Resolution
+    _Resolution = config_parser.get('TARGET_RESOLUTION', 'enable')
     _SRC_RESOLUTION_DISPLAY = "Unknown"
     if _SIZE is not None:
         _SRC_RESOLUTION_DISPLAY = "{width}x{height}".format(
             width=_SIZE[0], height=_SIZE[1])
     _RES_RESOLUTION_DISPLAY = _SRC_RESOLUTION_DISPLAY
-    if _SIZE is not None and charparser.Bool(_QUALITY):
+    if _SIZE is not None and charparser.Bool(_Resolution):
         _QUALITY_VALUE = float(config_parser.get('TARGET_RESOLUTION', 'value'))
         _WIDTH = float(_SIZE[0])
         _HEIGHT = float(_SIZE[1])
