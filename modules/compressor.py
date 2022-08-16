@@ -232,7 +232,6 @@ def compress_video(config_parser: configparser.ConfigParser, filepath: str, task
 
 def compress_image(config_parser: configparser.ConfigParser, filepath: str, task_cnt: int):
     _IMAGE_INFO = info_utils.Image(filepath)
-    _COMMAND = []
     # Input file
     add_arg('-i', filepath)
     # Quality
@@ -240,8 +239,8 @@ def compress_image(config_parser: configparser.ConfigParser, filepath: str, task
     add_arg('-q:v', _QUALITY)
     # Output file
     _OUTPUT_INFO = __CommonOutput(config_parser, filepath)
-    _COMMAND.append(_OUTPUT_INFO.OUTPUT_DIR + charparser.get_path_delimiter() +
-                    _OUTPUT_INFO.FILENAME + '.' + _OUTPUT_INFO.OUTPUT_FORMAT)
+    OUT_FILEPATH = _OUTPUT_INFO.OUTPUT_DIR + charparser.get_path_delimiter() + \
+        _OUTPUT_INFO.FILENAME + '.' + _OUTPUT_INFO.OUTPUT_FORMAT
 
     # EXTRA
     _DEL_SRC = config_parser.get('EXTRA', 'del_src')
@@ -252,7 +251,12 @@ def compress_image(config_parser: configparser.ConfigParser, filepath: str, task
     print("输入文件名: " + _OUTPUT_INFO.FILENAME_EXT)
     print("输出文件名: " + _OUTPUT_INFO.FILENAME + '.' + _OUTPUT_INFO.OUTPUT_FORMAT)
     print("压缩质量: " + _QUALITY)
-    _RET = ffpb.main(encoding='utf-8')
+    _COMMAND = []
+    for key in ARGS:
+        _COMMAND.append(key)
+        _COMMAND.append(ARGS[key])
+    _COMMAND.append(OUT_FILEPATH)
+    _RET = ffpb.main(_COMMAND, encoding='utf-8')
     _IMAGE_OUT_INFO = info_utils.Image(_OUTPUT_INFO.OUTPUT_DIR + charparser.get_path_delimiter() +
                                        _OUTPUT_INFO.FILENAME + '.' + _OUTPUT_INFO.OUTPUT_FORMAT)
 
