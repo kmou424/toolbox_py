@@ -70,6 +70,7 @@ class VideoConf:
 
 class ImageConf:
     SECTIONS = ['TARGET_QUALITY',
+                'TARGET_RESOLUTION',
                 'IO_FORMAT',
                 'IO_DIR',
                 'LOGGING',
@@ -77,6 +78,7 @@ class ImageConf:
 
     SECTIONS_COMMENT = [['Set target quality to compress image (1 - 50)',
                          'notes: A larger number corresponds to a lower quality.'],
+                        ['Limit resolution for your image'],
                         ['Scan image files as below extension name (split as \'|\')'],
                         ['Output image files extension name (follow codec of your choice)',
                          'Use \'none\' to mark path is not specified',
@@ -87,12 +89,14 @@ class ImageConf:
                         ['[Optional] Some extra settings', 'del_src: Delete original file when compress completed']]
 
     SECTIONS_CONF_NAME = [['value'],
+                          ['enable', 'value'],
                           ['input', 'output'],
                           ['input', 'output'],
                           ['enable', 'name'],
                           ['del_src']]
 
     SECTIONS_CONF_VALUE = [['2'],
+                           ['False', '1080'],
                            ['jpg|png', 'jpg'],
                            ['none', '[relative]out'],
                            ['True', 'log_image.txt'],

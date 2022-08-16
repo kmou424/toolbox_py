@@ -232,6 +232,7 @@ def compress_video(config_parser: configparser.ConfigParser, filepath: str, task
 
 def compress_image(config_parser: configparser.ConfigParser, filepath: str, task_cnt: int):
     _IMAGE_INFO = info_utils.Image(filepath)
+    _SIZE = _IMAGE_INFO.size
     # Input file
     add_arg('-i', filepath)
     # Quality
@@ -242,6 +243,34 @@ def compress_image(config_parser: configparser.ConfigParser, filepath: str, task
     OUT_FILEPATH = _OUTPUT_INFO.OUTPUT_DIR + charparser.get_path_delimiter() + \
         _OUTPUT_INFO.FILENAME + '.' + _OUTPUT_INFO.OUTPUT_FORMAT
 
+    # Quality
+    _QUALITY = config_parser.get('TARGET_RESOLUTION', 'enable')
+    _SRC_RESOLUTION_DISPLAY = "Unknown"
+    if _SIZE is not None:
+        _SRC_RESOLUTION_DISPLAY = "{width}x{height}".format(
+            width=_SIZE[0], height=_SIZE[1])
+    _RES_RESOLUTION_DISPLAY = _SRC_RESOLUTION_DISPLAY
+    if _SIZE is not None and charparser.Bool(_QUALITY):
+        _QUALITY_VALUE = float(config_parser.get('TARGET_RESOLUTION', 'value'))
+        _WIDTH = float(_SIZE[0])
+        _HEIGHT = float(_SIZE[1])
+        if _HEIGHT > _WIDTH:
+            # 竖图
+            if _WIDTH > _QUALITY_VALUE:
+                _ZOOM_RATIO = _QUALITY_VALUE / _WIDTH
+                _HEIGHT = _HEIGHT * _ZOOM_RATIO
+                _WIDTH = _QUALITY_VALUE
+        else:
+            # 横图
+            if _HEIGHT > _QUALITY_VALUE:
+                _ZOOM_RATIO = _QUALITY_VALUE / _HEIGHT
+                _HEIGHT = _QUALITY_VALUE
+                _WIDTH = _WIDTH * _ZOOM_RATIO
+        add_arg('-vf', 'scale=' +
+                str(_WIDTH) + ':' + str(_HEIGHT))
+        _RES_RESOLUTION_DISPLAY = "{width}x{height}".format(
+            width=int(_WIDTH), height=int(_HEIGHT))
+
     # EXTRA
     _DEL_SRC = config_parser.get('EXTRA', 'del_src')
 
@@ -251,6 +280,8 @@ def compress_image(config_parser: configparser.ConfigParser, filepath: str, task
     print("输入文件名: " + _OUTPUT_INFO.FILENAME_EXT)
     print("输出文件名: " + _OUTPUT_INFO.FILENAME + '.' + _OUTPUT_INFO.OUTPUT_FORMAT)
     print("压缩质量: " + _QUALITY)
+    print(
+        "分辨率: {src} -> {res}".format(src=_SRC_RESOLUTION_DISPLAY, res=_RES_RESOLUTION_DISPLAY))
     _COMMAND = []
     for key in ARGS:
         _COMMAND.append(key)

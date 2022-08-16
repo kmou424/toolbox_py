@@ -13,7 +13,7 @@ def get_encoders():
     return encoders
 
 
-def get_video_stream_info(filepath):
+def get_stream_info(filepath):
     f = ffmpeg.stream.Stream()
     f.input(filepath)
     streams = f.video_info().get('streams')
@@ -49,7 +49,7 @@ class Video(FileInfo):
 
     def __init__(self, filepath):
         super().__init__(filepath)
-        self.stream = get_video_stream_info(filepath)
+        self.stream = get_stream_info(filepath)
         self.__get_bitrate()
         self.__get_framerate()
         self.__get_size()
@@ -68,5 +68,14 @@ class Video(FileInfo):
 
 
 class Image(FileInfo):
+    stream: dict = None
+    size: list = None
+
     def __init__(self, filepath):
         super().__init__(filepath)
+        self.stream = get_stream_info(filepath)
+        self.__get_size()
+
+    def __get_size(self):
+        if 'width' in self.stream.keys() and 'height' in self.stream.keys():
+            self.size = [str(self.stream['width']), str(self.stream['height'])]
