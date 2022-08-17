@@ -35,7 +35,10 @@ class VideoConf:
                          'Use \'none\' to mark path is not specified',
                          '[Important] You must use \'absolute\' or \'relative\' to mark it is a absolute path or yet'
                          'by \'[]\', such as \'[absolute]D:\\Videos\\Anime\'',
-                         'Use [source] to mark output directory is same as input'],
+                         'Use [source] to mark output directory is same as input'
+                         'Tips: relative mode support \'..\\\' and preset variables',
+                         'You can insert preset variables such as {var_name}',
+                         'Available variables: {src_dir}'],
                         ['[Optional] To save log for progress'],
                         ['[Optional] Some extra settings',
                             'del_src: Delete original file when compress completed',
@@ -84,7 +87,10 @@ class ImageConf:
                          'Use \'none\' to mark path is not specified',
                          '[Important] You must use \'absolute\' or \'relative\' to mark it is a absolute path or yet'
                          'by \'[]\', such as \'[absolute]D:\\Videos\\Anime\'',
-                         'Use [source] to mark output directory is same as input'],
+                         'Use [source] to mark output directory is same as input',
+                         'Tips: relative mode support \'..\\\' and preset variables',
+                         'You can insert preset variables such as {var_name}',
+                         'Available variables: {src_dir}'],
                         ['[Optional] To save log for progress'],
                         ['[Optional] Some extra settings', 'del_src: Delete original file when compress completed']]
 
