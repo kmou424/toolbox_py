@@ -116,6 +116,8 @@ def compress_video(config_parser: configparser.ConfigParser, filepath: str, task
                 _ZOOM_RATIO = _QUALITY_VALUE / _HEIGHT
                 _HEIGHT = _QUALITY_VALUE
                 _WIDTH = _WIDTH * _ZOOM_RATIO
+        _SIZE[0] = str(_WIDTH)
+        _SIZE[1] = str(_HEIGHT)
         add_arg('-vf', 'scale=' +
                 str(_WIDTH) + ':' + str(_HEIGHT))
         _RES_RESOLUTION_DISPLAY = "{width}x{height}".format(
@@ -138,14 +140,20 @@ def compress_video(config_parser: configparser.ConfigParser, filepath: str, task
     # Extra argument
     # add_arg('-multipass', 'fullres')
     add_arg('-tier:v', 'high')
-    if '480' in _RES_RESOLUTION_DISPLAY:
-        add_arg('-level:v', '3.1')
-    if '720' in _RES_RESOLUTION_DISPLAY:
-        add_arg('-level:v', '4.2')
-    if '1080' in _RES_RESOLUTION_DISPLAY:
-        add_arg('-level:v', '5.2')
-    if '2160' in _RES_RESOLUTION_DISPLAY:
-        add_arg('-level:v', '6.2')
+    if _SIZE is not None:
+        base_resolution_refer_value = min(float(_SIZE[0]), float(_SIZE[1]))
+        if 480 > base_resolution_refer_value:
+            add_arg('-level:v', '2.1')
+        if 720 > base_resolution_refer_value >= 480:
+            add_arg('-level:v', '3.1')
+        if 1080 > base_resolution_refer_value >= 720:
+            add_arg('-level:v', '4.2')
+        if 2160 > base_resolution_refer_value >= 1080:
+            add_arg('-level:v', '5.2')
+        if 4320 > base_resolution_refer_value >= 2160:
+            add_arg('-level:v', '6')
+        if base_resolution_refer_value > 4320:
+            add_arg('-level:v', '6.2')
     add_arg('-rc:v', 'vbr')
 
     # Output file
