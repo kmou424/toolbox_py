@@ -4,6 +4,7 @@ import os
 import configparser
 import ffpb
 
+from default import config
 from modules import charparser, info_utils
 from pathlib import Path
 
@@ -128,7 +129,6 @@ def compress_video(config_parser: configparser.ConfigParser, filepath: str, task
     _ENCODER = config_parser.get('TARGET_ENCODER', 'encoder')
     if _ENCODER in info_utils.get_encoders():
         add_arg('-c:v', _ENCODER)
-        add_arg('-preset:v', 'slow')
         if _ENCODER.__contains__('nvenc')\
                 or _ENCODER.__contains__('qsv')\
                 or _ENCODER.__contains__('amf'):
@@ -136,6 +136,22 @@ def compress_video(config_parser: configparser.ConfigParser, filepath: str, task
             add_arg('-preset:v', 'p7')
     else:
         _ENCODER = _ENCODER + '(Invalid)'
+
+    # Encoder preset
+    _CODEC_PRESET = config_parser.get('TARGET_ENCODER', 'preset')
+    if '(Invalid)' not in _ENCODER \
+            and _ENCODER in config.VideoConf.CODEC_PRESET.keys() \
+            and _CODEC_PRESET != '' \
+            and _CODEC_PRESET is not None:
+        if _CODEC_PRESET in config.VideoConf.CODEC_PRESET[_ENCODER]:
+            add_arg('-preset', _CODEC_PRESET)
+        else:
+            _CODEC_PRESET = _CODEC_PRESET + '(Not support or Misspelling)'
+    else:
+        if _CODEC_PRESET == '' or _CODEC_PRESET == None:
+            _CODEC_PRESET = 'Not specified'
+        else:
+            _CODEC_PRESET = 'Encoder does not support preset config'
 
     # Extra argument
     # add_arg('-multipass', 'fullres')
@@ -203,6 +219,7 @@ def compress_video(config_parser: configparser.ConfigParser, filepath: str, task
         "分辨率: {src} -> {res}".format(src=_SRC_RESOLUTION_DISPLAY, res=_RES_RESOLUTION_DISPLAY))
     print("解码器: " + _DECODER)
     print("编码器: {encoder}".format(encoder=_ENCODER))
+    print("编码器Preset: {preset}".format(preset=_CODEC_PRESET))
     print("硬件加速: " + str(_HW_ENABLED))
     print("线程数: " + _THREADS)
     _LOG_FILE_ENABLE = config_parser.get('LOGGING', 'enable')

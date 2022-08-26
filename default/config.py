@@ -14,6 +14,14 @@ class VideoConf:
                 'EXTRA',
                 'SKIP']
 
+    CODEC_PRESET = {
+        'libx264': ['ultrafast', 'superfast', 'veryfast', 'faster', 'fast', 'medium', 'slow', 'slower', 'veryslow'],
+        'libx264rgb': ['ultrafast', 'superfast', 'veryfast', 'faster', 'fast', 'medium', 'slow', 'slower', 'veryslow'],
+        'h264_nvenc': ['default', 'slow', 'medium', 'fast', 'hp', 'hq', 'bd', 'll', 'llhq', 'llhp', 'lossless', 'losslesshp', 'p1', 'p2', 'p3', 'p4', 'p5', 'p6', 'p7'],
+        'libx265': ['ultrafast', 'superfast', 'veryfast', 'faster', 'fast', 'medium', 'slow', 'slower', 'veryslow'],
+        'hevc_nvenc': ['default', 'slow', 'medium', 'fast', 'hp', 'hq', 'bd', 'll', 'llhq', 'llhp', 'lossless', 'losslesshp', 'p1', 'p2', 'p3', 'p4', 'p5', 'p6', 'p7']
+    }
+
     SECTIONS_COMMENT = [['Set target compress rate for your video', 'compress_arg: \'crf\' or \'cq\'',
                          'You can type 0-51, 0 is lossless, 18 is visually lossless',
                          'Note: 18-28 is recommended, we mostly choose 23.5'],
@@ -28,7 +36,9 @@ class VideoConf:
                          'Suggest options: ' + "libx264, libx265",
                          'Available options: ' +
                          ', '.join(info_utils.get_encoders()),
-                         'Note: Encoders ending in *_nvenc are supported GPU'],
+                         'Note: Encoders ending in *_nvenc are supported GPU',
+                         'Preset is a config item of the encoder. A different encoder has different presets.',
+                         'For more information, please check the documentation of the encoder'],
                         ['Scan video files as below extension name (split as \'|\')'],
                         ['Prefix and suffix for output file'],
                         ['Output video files extension name (follow codec of your choice)',
@@ -50,7 +60,7 @@ class VideoConf:
                           ['enable', 'value'],
                           ['enable', 'value'],
                           ['enable', 'hwaccel', 'decoder'],
-                          ['encoder'],
+                          ['encoder', 'preset'],
                           ['input', 'output'],
                           ['prefix', 'suffix'],
                           ['input', 'output'],
@@ -62,7 +72,7 @@ class VideoConf:
                            ['False', '60'],
                            ['False', '720'],
                            ['False', 'cuvid', 'h264_cuvid'],
-                           ['libx264'],
+                           ['libx264', 'medium'],
                            ['mp4|mov', 'mp4'],
                            ['[compressed]', ''],
                            ['none', '[relative]out'],
