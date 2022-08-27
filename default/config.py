@@ -23,6 +23,8 @@ class VideoConf:
         'bitrate': ['1pass', '2pass', 'bitrateonly']
     }
 
+    ENCODER_RATE_CONTROL = ['vbr', 'cbr']
+
     CODEC_PRESET = {
         'libx264': ['ultrafast', 'superfast', 'veryfast', 'faster', 'fast', 'medium', 'slow', 'slower', 'veryslow'],
         'libx264rgb': ['ultrafast', 'superfast', 'veryfast', 'faster', 'fast', 'medium', 'slow', 'slower', 'veryslow'],
@@ -61,7 +63,10 @@ class VideoConf:
             lang.get_string("CONF_VIDEO_ENCODER_OPTION_4"),
             lang.get_string("CONF_VIDEO_ENCODER_OPTION_5"),
             lang.get_string("CONF_VIDEO_ENCODER_OPTION_6"),
-            lang.get_string("CONF_VIDEO_ENCODER_OPTION_7")
+            lang.get_string("CONF_VIDEO_ENCODER_OPTION_7"),
+            lang.get_string("CONF_VIDEO_ENCODER_OPTION_8"),
+            lang.get_string("CONF_VIDEO_ENCODER_OPTION_9"),
+            lang.get_string("CONF_VIDEO_ENCODER_OPTION_10")
         ],
         [
             lang.get_string("CONF_VIDEO_IO_FORMAT_1"),
@@ -97,7 +102,7 @@ class VideoConf:
                           ['enable', 'value'],
                           ['enable', 'hwaccel', 'decoder'],
                           ['encoder', 'preset'],
-                          ['enable', 'mode', 'value', 'bitrate'],
+                          ['enable', 'mode', 'value', 'bitrate', 'rc'],
                           ['input', 'output'],
                           ['prefix', 'suffix'],
                           ['input', 'output'],
@@ -109,7 +114,7 @@ class VideoConf:
                            ['False', '720'],
                            ['False', 'cuvid', 'h264_cuvid'],
                            ['libx264', 'medium'],
-                           ['True', 'crf', '23.5', '2000k'],
+                           ['True', 'crf', '23.5', '2000k', 'vbr'],
                            ['mp4|mov', 'mp4'],
                            ['[compressed]', ''],
                            ['none', '[relative]out'],

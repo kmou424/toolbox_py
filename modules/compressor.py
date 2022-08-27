@@ -145,6 +145,8 @@ def compress_video(config_parser: configparser.ConfigParser, filepath: str, task
             'TARGET_ENCODER_OPTION', 'mode')
         _ENCODE_MODE_AVAILABLE = False
         _ENCODE_ARG_KEY = 'None'
+        _ENCODE_RATE_CONTROL = config_parser.get(
+            'TARGET_ENCODER_OPTION', 'rc')
         for i in config.VideoConf.ENCODER_MODE.keys():
             if _ENCODE_MODE in config.VideoConf.ENCODER_MODE[i]:
                 _ENCODE_MODE_AVAILABLE = True
@@ -173,6 +175,8 @@ def compress_video(config_parser: configparser.ConfigParser, filepath: str, task
                 if not _ENCODE_ARG.endswith('k'):
                     _ENCODE_ARG += 'k'
                 add_arg('-b:v', _ENCODE_ARG)
+        if _ENCODE_RATE_CONTROL in config.VideoConf.ENCODER_RATE_CONTROL:
+            add_arg('-rc:v', _ENCODE_RATE_CONTROL)
 
     # Extra argument
     # add_arg('-multipass', 'fullres')
@@ -191,7 +195,6 @@ def compress_video(config_parser: configparser.ConfigParser, filepath: str, task
             add_arg('-level:v', '6')
         if base_resolution_refer_value > 4320:
             add_arg('-level:v', '6.2')
-    add_arg('-rc:v', 'vbr')
 
     # Output file
     _OUTPUT_INFO = __CommonOutput(config_parser, filepath)
