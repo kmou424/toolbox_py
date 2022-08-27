@@ -140,7 +140,6 @@ def compress_video(config_parser: configparser.ConfigParser, filepath: str, task
         'TARGET_ENCODER_OPTION', 'enable')
     _ENCODE_MODE = 'None'
     _ENCODE_ARG = 'None'
-    _ENCODE_ADAPTIVE_RC = False
     if charparser.Bool(_ENCODE_OPTION_ENABLED):
         _ENCODE_MODE = config_parser.get(
             'TARGET_ENCODER_OPTION', 'mode')
@@ -155,10 +154,8 @@ def compress_video(config_parser: configparser.ConfigParser, filepath: str, task
             _ENCODE_ARG = config_parser.get(
                 'TARGET_ENCODER_OPTION', _ENCODE_ARG_KEY)
             if _ENCODE_MODE == 'crf':
-                _ENCODE_ADAPTIVE_RC = True
                 add_arg('-crf:v', _ENCODE_ARG)
             if _ENCODE_MODE == 'cq':
-                _ENCODE_ADAPTIVE_RC = True
                 add_arg('-cq:v', str(int(float(_ENCODE_ARG))))
                 add_arg('-qmin', str(int(float(_ENCODE_ARG))))
                 add_arg('-qmax', str(int(float(_ENCODE_ARG))))
@@ -175,9 +172,7 @@ def compress_video(config_parser: configparser.ConfigParser, filepath: str, task
 
     # Extra argument
     # add_arg('-multipass', 'fullres')
-    if _ENCODE_ADAPTIVE_RC:
-        add_arg('-tier:v', 'high')
-        add_arg('-rc:v', 'vbr')
+    add_arg('-tier:v', 'high')
     if _SIZE is not None:
         base_resolution_refer_value = min(float(_SIZE[0]), float(_SIZE[1]))
         if 480 > base_resolution_refer_value:
@@ -192,6 +187,7 @@ def compress_video(config_parser: configparser.ConfigParser, filepath: str, task
             add_arg('-level:v', '6')
         if base_resolution_refer_value > 4320:
             add_arg('-level:v', '6.2')
+    add_arg('-rc:v', 'vbr')
 
     # Output file
     _OUTPUT_INFO = __CommonOutput(config_parser, filepath)
