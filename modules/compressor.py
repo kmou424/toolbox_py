@@ -62,24 +62,6 @@ def compress_video(config_parser: configparser.ConfigParser, filepath: str, task
         add_arg('-c:v', _DECODER)
     # Input file
     add_arg('-i', filepath)
-    # Compress arg
-    _COMPRESS_ARG_ENABLED = config_parser.get('TARGET_COMPRESS_RATE', 'enable')
-    _COMPRESS_ARG = 'None'
-    _COMPRESS_ARG_VALUE = 'None'
-    if charparser.Bool(_COMPRESS_ARG_ENABLED):
-        _COMPRESS_ARG = config_parser.get(
-            'TARGET_COMPRESS_RATE', 'compress_arg')
-        _COMPRESS_ARG_VALUE = config_parser.get(
-            'TARGET_COMPRESS_RATE', 'value')
-        if _COMPRESS_ARG == 'crf':
-            add_arg('-crf:v', _COMPRESS_ARG_VALUE)
-        if _COMPRESS_ARG == 'cq':
-            add_arg('-cq:v', str(int(float(_COMPRESS_ARG_VALUE))))
-            add_arg('-qmin', str(int(float(_COMPRESS_ARG_VALUE))))
-            add_arg('-qmax', str(int(float(_COMPRESS_ARG_VALUE))))
-        if _COMPRESS_ARG != 'cq' and _COMPRESS_ARG != 'crf':
-            _COMPRESS_ARG = 'None'
-            _COMPRESS_ARG_VALUE = 'None'
     # Framerate
     _SRC_FRAMERATE = _VIDEO_INFO.framerate
     _SRC_FRAMERATE_DISPLAY = "Unknown"
@@ -153,6 +135,41 @@ def compress_video(config_parser: configparser.ConfigParser, filepath: str, task
         else:
             _CODEC_PRESET = 'Encoder does not support preset config'
 
+    # Encoder option
+    _ENCODE_OPTION_ENABLED = config_parser.get(
+        'TARGET_ENCODER_OPTION', 'enable')
+    _ENCODE_MODE = 'None'
+    _ENCODE_ARG = 'None'
+    if charparser.Bool(_ENCODE_OPTION_ENABLED):
+        _ENCODE_MODE = config_parser.get(
+            'TARGET_ENCODER_OPTION', 'mode')
+        _ENCODE_MODE_AVAILABLE = False
+        _ENCODE_ARG_KEY = 'None'
+        for i in config.VideoConf.ENCODER_MODE.keys():
+            if _ENCODE_MODE in config.VideoConf.ENCODER_MODE[i]:
+                _ENCODE_MODE_AVAILABLE = True
+                _ENCODE_ARG_KEY = i
+                break
+        if _ENCODE_MODE_AVAILABLE:
+            _ENCODE_ARG = config_parser.get(
+                'TARGET_ENCODER_OPTION', _ENCODE_ARG_KEY)
+            if _ENCODE_MODE == 'crf':
+                add_arg('-crf:v', _ENCODE_ARG)
+            if _ENCODE_MODE == 'cq':
+                add_arg('-cq:v', str(int(float(_ENCODE_ARG))))
+                add_arg('-qmin', str(int(float(_ENCODE_ARG))))
+                add_arg('-qmax', str(int(float(_ENCODE_ARG))))
+            if _ENCODE_MODE == '1pass':
+                if not _ENCODE_ARG.endswith('k'):
+                    _ENCODE_ARG += 'k'
+                add_arg('-pass', '1')
+                add_arg('-b:v', _ENCODE_ARG)
+            if _ENCODE_MODE == '2pass':
+                if not _ENCODE_ARG.endswith('k'):
+                    _ENCODE_ARG += 'k'
+                add_arg('-pass', '2')
+                add_arg('-b:v', _ENCODE_ARG)
+
     # Extra argument
     # add_arg('-multipass', 'fullres')
     add_arg('-tier:v', 'high')
@@ -213,12 +230,11 @@ def compress_video(config_parser: configparser.ConfigParser, filepath: str, task
     print("视频码率: " + _BITRATE_DISPLAY)
     print("视频帧率: {src} -> {res}".format(src=_SRC_FRAMERATE_DISPLAY,
           res=_RES_FRAMERATE_DISPLAY))
-    print("压缩方法和压缩率: {arg} {comp_value}".format(
-        arg=_COMPRESS_ARG, comp_value=_COMPRESS_ARG_VALUE))
     print(
         "分辨率: {src} -> {res}".format(src=_SRC_RESOLUTION_DISPLAY, res=_RES_RESOLUTION_DISPLAY))
     print("解码器: " + _DECODER)
-    print("编码器: {encoder}".format(encoder=_ENCODER))
+    print("编码器(和参数): {encoder} {mode} {value}".format(
+        encoder=_ENCODER, mode=_ENCODE_MODE, value=_ENCODE_ARG))
     print("编码器Preset: {preset}".format(preset=_CODEC_PRESET))
     print("硬件加速: " + str(_HW_ENABLED))
     print("线程数: " + _THREADS)
@@ -234,11 +250,10 @@ def compress_video(config_parser: configparser.ConfigParser, filepath: str, task
         print("开始压制视频...")
         if charparser.Bool(_LOG_FILE_ENABLE):
             _LOG_FILE.write("[" + str(task_cnt) + "] " + filepath +
-                            "\n    Compress Rate: {arg} {comp_value}".format(arg=_COMPRESS_ARG, comp_value=_COMPRESS_ARG_VALUE) +
                             "\n    Framerate: " + _SRC_FRAMERATE_DISPLAY + " -> " + _RES_FRAMERATE_DISPLAY +
                             "\n    Resolution: {src} -> {res}".format(src=_SRC_RESOLUTION_DISPLAY, res=_RES_RESOLUTION_DISPLAY) +
                             "\n    Decoder: " + _DECODER +
-                            "\n    Encoder: {encoder}".format(encoder=_ENCODER) +
+                            "\n    Encoder(With args): {encoder} {mode} {value}".format(encoder=_ENCODER, mode=_ENCODE_MODE, value=_ENCODE_ARG) +
                             "\n    Hardware Acceleration: " + str(_HW_ENABLED) + '\n')
         _COMMAND = []
         for key in ARGS:

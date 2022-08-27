@@ -2,17 +2,22 @@ from modules import info_utils
 
 
 class VideoConf:
-    SECTIONS = ['TARGET_COMPRESS_RATE',
-                'TARGET_FRAMERATE',
+    SECTIONS = ['TARGET_FRAMERATE',
                 'TARGET_QUALITY',
                 'TARGET_DECODER',
                 'TARGET_ENCODER',
+                'TARGET_ENCODER_OPTION',
                 'IO_FORMAT',
                 'IO_FIX',
                 'IO_DIR',
                 'LOGGING',
                 'EXTRA',
                 'SKIP']
+
+    ENCODER_MODE = {
+        'value': ['crf', 'cq'],
+        'bitrate': ['1pass', '2pass']
+    }
 
     CODEC_PRESET = {
         'libx264': ['ultrafast', 'superfast', 'veryfast', 'faster', 'fast', 'medium', 'slow', 'slower', 'veryslow'],
@@ -22,10 +27,7 @@ class VideoConf:
         'hevc_nvenc': ['default', 'slow', 'medium', 'fast', 'hp', 'hq', 'bd', 'll', 'llhq', 'llhp', 'lossless', 'losslesshp', 'p1', 'p2', 'p3', 'p4', 'p5', 'p6', 'p7']
     }
 
-    SECTIONS_COMMENT = [['Set target compress rate for your video', 'compress_arg: \'crf\' or \'cq\'',
-                         'You can type 0-51, 0 is lossless, 18 is visually lossless',
-                         'Note: 18-28 is recommended, we mostly choose 23.5'],
-                        ['[Optional] Set target framerate for your video'],
+    SECTIONS_COMMENT = [['[Optional] Set target framerate for your video'],
                         ['[Optional] Set video quality for your video',
                          'Such as 540, 720, 1080 (For video height)',
                          'If video quality is lower than your setting, program will skip this option'],
@@ -39,6 +41,13 @@ class VideoConf:
                          'Note: Encoders ending in *_nvenc are supported GPU',
                          'Preset is a config item of the encoder. A different encoder has different presets.',
                          'For more information, please check the documentation of the encoder'],
+                        ['Set encoder option for task',
+                         '>> mode: \'crf\', \'cq\', \'1pass\', \'2pass\'',
+                         '>> value: Only available for \'crf\' and \'cq\', adaptive bitrate for video',
+                         'You can type 0-51, 0 is lossless, 18 is visually lossless',
+                         'Note: 18-28 is recommended, we mostly choose 23.5',
+                         '>> bitrate: Only available for \'1pass\' and \'2pass\', lock bitrate for video',
+                         'You can type a number only or a number which ends with \'k\''],
                         ['Scan video files as below extension name (split as \'|\')'],
                         ['Prefix and suffix for output file'],
                         ['Output video files extension name (follow codec of your choice)',
@@ -51,16 +60,16 @@ class VideoConf:
                          'Available variables: {src_dir}'],
                         ['[Optional] To save log for progress'],
                         ['[Optional] Some extra settings',
-                            'del_src: Delete original file when compress completed',
-                            'threads: Number of threads to use'],
+                         '>> del_src: Delete original file when compress completed',
+                         '>> threads: Number of threads to use'],
                         ['[Optional] Skip options',
-                         'min_skip_bitrate: If bitrate of video is lower than this option, will skip it']]
+                         '>> min_skip_bitrate: If bitrate of video is lower than this option, will skip it']]
 
-    SECTIONS_CONF_NAME = [['enable', 'compress_arg', 'value'],
-                          ['enable', 'value'],
+    SECTIONS_CONF_NAME = [['enable', 'value'],
                           ['enable', 'value'],
                           ['enable', 'hwaccel', 'decoder'],
                           ['encoder', 'preset'],
+                          ['enable', 'mode', 'value', 'bitrate'],
                           ['input', 'output'],
                           ['prefix', 'suffix'],
                           ['input', 'output'],
@@ -68,11 +77,11 @@ class VideoConf:
                           ['del_src', 'threads'],
                           ['min_bitrate']]
 
-    SECTIONS_CONF_VALUE = [['True', 'crf', '23.5'],
-                           ['False', '60'],
+    SECTIONS_CONF_VALUE = [['False', '60'],
                            ['False', '720'],
                            ['False', 'cuvid', 'h264_cuvid'],
                            ['libx264', 'medium'],
+                           ['True', 'crf', '23.5', '2000k'],
                            ['mp4|mov', 'mp4'],
                            ['[compressed]', ''],
                            ['none', '[relative]out'],
