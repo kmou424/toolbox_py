@@ -169,6 +169,10 @@ def compress_video(config_parser: configparser.ConfigParser, filepath: str, task
                     _ENCODE_ARG += 'k'
                 add_arg('-pass', '2')
                 add_arg('-b:v', _ENCODE_ARG)
+            if _ENCODE_MODE == 'bitrateonly':
+                if not _ENCODE_ARG.endswith('k'):
+                    _ENCODE_ARG += 'k'
+                add_arg('-b:v', _ENCODE_ARG)
 
     # Extra argument
     # add_arg('-multipass', 'fullres')

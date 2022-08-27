@@ -20,7 +20,7 @@ class VideoConf:
 
     ENCODER_MODE = {
         'value': ['crf', 'cq'],
-        'bitrate': ['1pass', '2pass']
+        'bitrate': ['1pass', '2pass', 'bitrateonly']
     }
 
     CODEC_PRESET = {
