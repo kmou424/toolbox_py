@@ -26,7 +26,7 @@ class VideoConf:
     PASS_MODE_TEMP_FILES = ['ffmpeg2pass-0.log.mbtree', 'ffmpeg2pass-0.log',
                             'ffmpeg2pass-0.log.mbtree.temp', 'ffmpeg2pass-0.log.temp']
 
-    ENCODER_RATE_CONTROL = ['vbr', 'cbr']
+    ENCODER_RATE_CONTROL = ['vbr', 'vbr_hq', 'cbr']
 
     CODEC_PRESET = {
         'libx264': ['ultrafast', 'superfast', 'veryfast', 'faster', 'fast', 'medium', 'slow', 'slower', 'veryslow'],
