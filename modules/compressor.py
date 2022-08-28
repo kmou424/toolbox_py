@@ -272,6 +272,13 @@ def compress_video(config_parser: configparser.ConfigParser, filepath: str, task
         if _RET != 0:
             print("压制失败!")
         else:
+            if 'pass' in _ENCODE_MODE:
+                dirname = os.getcwd()
+                dirpath = Path(dirname)
+                for t in config.VideoConf.PASS_MODE_TEMP_FILES:
+                    tmp_path = dirpath / t
+                    if tmp_path.exists():
+                        os.remove(tmp_path.absolute())
             if charparser.Bool(_DEL_SRC):
                 os.remove(filepath)
     print()
