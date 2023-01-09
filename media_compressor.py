@@ -99,3 +99,10 @@ TASK_CNT = 0
 for FILE in _FILE_LIST:
     TASK_CNT += 1
     compressor.compress(config_parser, FILE, TASK_CNT, _COMPRESS_TARGET)
+
+if 'pass' in config_parser.get('TARGET_ENCODER_OPTION', 'mode'):
+    dirname = os.getcwd()
+    for t in config.VideoConf.PASS_MODE_LOG_FILES:
+        tmp_path = os.path.join(dirname, t)
+        if os.path.exists(tmp_path):
+            os.remove(tmp_path)

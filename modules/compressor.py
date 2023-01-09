@@ -274,11 +274,10 @@ def compress_video(config_parser: configparser.ConfigParser, filepath: str, task
         else:
             if 'pass' in _ENCODE_MODE:
                 dirname = os.getcwd()
-                dirpath = Path(dirname)
-                for t in config.VideoConf.PASS_MODE_TEMP_FILES:
-                    tmp_path = dirpath / t
-                    if tmp_path.exists():
-                        os.remove(tmp_path.absolute())
+                for t in config.VideoConf.PASS_MODE_MBTREE_FILES:
+                    tmp_path = os.path.join(dirname, t)
+                    if os.path.exists(tmp_path):
+                        os.remove(tmp_path)
             if charparser.Bool(_DEL_SRC):
                 os.remove(filepath)
     print()

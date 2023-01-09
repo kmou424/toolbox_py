@@ -23,8 +23,9 @@ class VideoConf:
         'bitrate': ['1pass', '2pass', 'bitrateonly']
     }
 
-    PASS_MODE_TEMP_FILES = ['ffmpeg2pass-0.log.mbtree', 'ffmpeg2pass-0.log',
-                            'ffmpeg2pass-0.log.mbtree.temp', 'ffmpeg2pass-0.log.temp']
+    PASS_MODE_MBTREE_FILES = ['ffmpeg2pass-0.log.mbtree', 'ffmpeg2pass-0.log.mbtree.temp']
+
+    PASS_MODE_LOG_FILES = ['ffmpeg2pass-0.log', 'ffmpeg2pass-0.log.temp']
 
     ENCODER_RATE_CONTROL = ['vbr', 'vbr_hq', 'cbr']
 
