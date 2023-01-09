@@ -50,6 +50,7 @@ def printHelp():
 _CONF_PRESET = ''
 _COMPRESS_TARGET = ''
 _CONFIG_PATH = ''
+PWD = os.getcwd()
 
 if len(sys.argv) > 1:
     if sys.argv[1] == 'video':
@@ -79,10 +80,10 @@ config_parser.read(_CONFIG_PATH, 'utf-8')
 
 _INPUT_FORMAT = config_parser.get('IO_FORMAT', 'input').split('|')
 _INPUT_DIR = charparser.parse_path(
-    config_parser.get('IO_DIR', 'input'), os.getcwd())
+    config_parser.get('IO_DIR', 'input'), PWD)
 if _INPUT_DIR == 'none':
-    _INPUT_DIR = os.getcwd()
-_IGNORE_DIR = [charparser.parse_path(i, os.getcwd()) for i in config_parser.get('IO_DIR', 'ignore_input').split('|')]
+    _INPUT_DIR = PWD
+_IGNORE_DIR = [charparser.parse_path(i, PWD) for i in config_parser.get('IO_DIR', 'ignore_input').split('|')]
 _FILE_LIST = filequery.search_by_ext(
     filequery.list_all_files(_INPUT_DIR), _INPUT_FORMAT)
 
@@ -95,14 +96,21 @@ for ignore in _IGNORE_DIR:
             _NEW_FILE_LIST.append(file)
     _FILE_LIST = _NEW_FILE_LIST
 
+# Pass mode prepare
+if 'pass' in config_parser.get('TARGET_ENCODER_OPTION', 'mode'):
+    for t in config.VideoConf.PASS_MODE_LOG_FILES:
+        tmp_path = os.path.join(PWD, t)
+        # Sepical judgement: Only create log file not temp file
+        if not os.path.exists(tmp_path) and not tmp_path.endswith('.temp'):
+            open(tmp_path, 'w', encoding='utf-8').close()
+
 TASK_CNT = 0
 for FILE in _FILE_LIST:
     TASK_CNT += 1
     compressor.compress(config_parser, FILE, TASK_CNT, _COMPRESS_TARGET)
 
 if 'pass' in config_parser.get('TARGET_ENCODER_OPTION', 'mode'):
-    dirname = os.getcwd()
     for t in config.VideoConf.PASS_MODE_LOG_FILES:
-        tmp_path = os.path.join(dirname, t)
+        tmp_path = os.path.join(PWD, t)
         if os.path.exists(tmp_path):
             os.remove(tmp_path)
