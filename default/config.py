@@ -1,8 +1,8 @@
-from language.locale_base import Laguage, get_default_language
+from language.locale_base import Language, get_default_language
 from modules import info_utils
 
 
-lang = Laguage(get_default_language(), 'en_US')
+lang = Language(get_default_language(), 'en_US')
 
 
 class VideoConf:
@@ -85,7 +85,8 @@ class VideoConf:
             lang.get_string("CONF_VIDEO_IO_DIR_4"),
             lang.get_string("CONF_VIDEO_IO_DIR_5"),
             lang.get_string("CONF_VIDEO_IO_DIR_6"),
-            lang.get_string("CONF_VIDEO_IO_DIR_7")
+            lang.get_string("CONF_VIDEO_IO_DIR_7"),
+            lang.get_string("CONF_VIDEO_IO_DIR_8")
         ],
         [
             lang.get_string("CONF_VIDEO_LOGGING_1")
@@ -108,7 +109,7 @@ class VideoConf:
                           ['enable', 'mode', 'value', 'bitrate', 'rc'],
                           ['input', 'output'],
                           ['prefix', 'suffix'],
-                          ['input', 'output'],
+                          ['input', 'ignore_input', 'output'],
                           ['enable', 'name'],
                           ['del_src', 'threads'],
                           ['min_bitrate']]
@@ -120,7 +121,7 @@ class VideoConf:
                            ['True', 'crf', '23.5', '2000k', 'vbr'],
                            ['mp4|mov', 'mp4'],
                            ['[compressed]', ''],
-                           ['none', '[relative]out'],
+                           ['none', '[relative]in|[relative]out', '[relative]out'],
                            ['False', 'log_video.txt'],
                            ['False', '1'],
                            ['0']]

@@ -10,7 +10,7 @@ def get_default_language():
     return lang
 
 
-class Laguage:
+class Language:
     def __init__(self, target_lang: str, default_lang: str):
         self.lang_dict = {}
         dirname, __ = os.path.split(os.path.abspath(__file__))

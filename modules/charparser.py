@@ -46,24 +46,18 @@ def parse_path(path: str, ori_filepath: str):
     if path.endswith('\\'):
         path.rstrip('\\')
 
-    ori_dirname_list = os.path.dirname(
-        ori_filepath).split(get_path_delimiter())
     # replace preset variables
     preset_variables = dict()
-    preset_variables['src_dir'] = ori_dirname_list[-1]
+    preset_variables['src_dir'] = os.getcwd()
     path = replace_variables(path, preset_variables)
 
     path_head = path[start:end]
     path_body = path[end+1:]
 
     if path_head == 'absolute':
-        return path[end + 1:]
+        return path_body
     elif path_head == 'relative':
-        while path_body.startswith('..\\') or path_body.startswith('../'):
-            path_body = path_body[3:]
-            ori_dirname_list = ori_dirname_list[:-1]
-        ori_dirname = get_path_delimiter().join(ori_dirname_list)
-        return ori_dirname + get_path_delimiter() + path_body
+        return os.path.join(ori_filepath, path_body)
     elif path_head == 'source':
         return os.path.dirname(ori_filepath)
     else:

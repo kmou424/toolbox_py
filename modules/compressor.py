@@ -17,7 +17,7 @@ class __CommonOutput:
 
     def __init__(self, config_parser: configparser.ConfigParser, filepath: str):
         self.OUTPUT_DIR = charparser.parse_path(
-            config_parser.get('IO_DIR', 'output'), filepath)
+            config_parser.get('IO_DIR', 'output'), os.path.dirname(filepath))
         if not Path(self.OUTPUT_DIR).exists():
             os.makedirs(self.OUTPUT_DIR)
         self.OUTPUT_FORMAT = config_parser.get('IO_FORMAT', 'output')
@@ -66,11 +66,11 @@ def compress_video(config_parser: configparser.ConfigParser, filepath: str, task
     _SRC_FRAMERATE = _VIDEO_INFO.framerate
     _SRC_FRAMERATE_DISPLAY = "Unknown"
     _RES_FRAMERATE_ENABLED = config_parser.get('TARGET_FRAMERATE', 'enable')
+    _RES_FRAMERATE = config_parser.get('TARGET_FRAMERATE', 'value')
     if _SRC_FRAMERATE is not None:
         _SRC_FRAMERATE_DISPLAY = str(_SRC_FRAMERATE) + 'fps'
     _RES_FRAMERATE_DISPLAY = _SRC_FRAMERATE_DISPLAY
-    if _SRC_FRAMERATE is not None and charparser.Bool(_RES_FRAMERATE_ENABLED):
-        _RES_FRAMERATE = config_parser.get('TARGET_FRAMERATE', 'value')
+    if _SRC_FRAMERATE is not None and charparser.Bool(_RES_FRAMERATE_ENABLED) and float(_SRC_FRAMERATE) > float(_RES_FRAMERATE):
         add_arg('-r', _RES_FRAMERATE)
         _RES_FRAMERATE_DISPLAY += ' fps'
     else:

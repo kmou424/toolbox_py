@@ -5,9 +5,11 @@ import sys
 
 from default import config
 from modules import filequery, charparser, compressor
+from language.locale_base import Language, get_default_language
 from pathlib import Path
 
 config_parser = configparser.ConfigParser()
+lang = Language(get_default_language(), 'en_US')
 
 
 def addComment(file_name, section, comment):
@@ -80,8 +82,18 @@ _INPUT_DIR = charparser.parse_path(
     config_parser.get('IO_DIR', 'input'), os.getcwd())
 if _INPUT_DIR == 'none':
     _INPUT_DIR = os.getcwd()
+_IGNORE_DIR = [charparser.parse_path(i, os.getcwd()) for i in config_parser.get('IO_DIR', 'ignore_input').split('|')]
 _FILE_LIST = filequery.search_by_ext(
     filequery.list_all_files(_INPUT_DIR), _INPUT_FORMAT)
+
+for ignore in _IGNORE_DIR:
+    _NEW_FILE_LIST = []
+    for file in _FILE_LIST:
+        if file.startswith(ignore):
+            print(lang.get_string("IGNORE_INPUT_NOTICE_HEAD"), file)
+        else:
+            _NEW_FILE_LIST.append(file)
+    _FILE_LIST = _NEW_FILE_LIST
 
 TASK_CNT = 0
 for FILE in _FILE_LIST:
