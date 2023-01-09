@@ -5,6 +5,7 @@ import sys
 
 from default import config
 from modules import filequery, charparser, compressor
+from modules.cleaner import clean_relative_files, create_relative_files, PASS_MODE_LOG_FILES, PASS_MODE_MBTREE_FILES
 from language.locale_base import Language, get_default_language
 from pathlib import Path
 
@@ -97,20 +98,18 @@ for ignore in _IGNORE_DIR:
     _FILE_LIST = _NEW_FILE_LIST
 
 # Pass mode prepare
-if 'pass' in config_parser.get('TARGET_ENCODER_OPTION', 'mode'):
-    for t in config.VideoConf.PASS_MODE_LOG_FILES:
-        tmp_path = os.path.join(PWD, t)
+if _COMPRESS_TARGET == 'video' and 'pass' in config_parser.get('TARGET_ENCODER_OPTION', 'mode'):
+    log_file_list = []
+    for f in PASS_MODE_LOG_FILES:
         # Sepical judgement: Only create log file not temp file
-        if not os.path.exists(tmp_path) and not tmp_path.endswith('.temp'):
-            open(tmp_path, 'w', encoding='utf-8').close()
+        if not f.endswith('.temp'):
+            log_file_list.append(f)
+    create_relative_files(log_file_list)
 
 TASK_CNT = 0
 for FILE in _FILE_LIST:
     TASK_CNT += 1
     compressor.compress(config_parser, FILE, TASK_CNT, _COMPRESS_TARGET)
 
-if 'pass' in config_parser.get('TARGET_ENCODER_OPTION', 'mode'):
-    for t in config.VideoConf.PASS_MODE_LOG_FILES:
-        tmp_path = os.path.join(PWD, t)
-        if os.path.exists(tmp_path):
-            os.remove(tmp_path)
+if _COMPRESS_TARGET == 'video' and 'pass' in config_parser.get('TARGET_ENCODER_OPTION', 'mode'):
+    clean_relative_files(PASS_MODE_MBTREE_FILES)

@@ -6,7 +6,9 @@ import ffpb
 
 from default import config
 from modules import charparser, info_utils
+from modules.cleaner import clean_relative_files, PASS_MODE_LOG_FILES, PASS_MODE_MBTREE_FILES
 from language.locale_base import Language, get_default_language
+
 from pathlib import Path
 
 lang = Language(get_default_language(), 'en_US')
@@ -144,8 +146,7 @@ def compress_video(config_parser: configparser.ConfigParser, filepath: str, task
     _ENCODE_MODE = 'None'
     _ENCODE_ARG = 'None'
     if charparser.Bool(_ENCODE_OPTION_ENABLED):
-        _ENCODE_MODE = config_parser.get(
-            'TARGET_ENCODER_OPTION', 'mode')
+        _ENCODE_MODE = config_parser.get('TARGET_ENCODER_OPTION', 'mode')
         _ENCODE_MODE_AVAILABLE = False
         _ENCODE_ARG_KEY = 'None'
         _ENCODE_RATE_CONTROL = config_parser.get(
@@ -276,17 +277,12 @@ def compress_video(config_parser: configparser.ConfigParser, filepath: str, task
         if os.path.exists(OUT_FILEPATH) and not charparser.Bool(_OVERRIDE):
             print(lang.get_string('NOT_OVERRIDE_OUTPUT_NOTICE'))
             return
-
         _RET = ffpb.main(_COMMAND, encoding='utf-8')
         if _RET != 0:
             print("压制失败!")
         else:
             if 'pass' in _ENCODE_MODE:
-                dirname = os.getcwd()
-                for t in config.VideoConf.PASS_MODE_MBTREE_FILES:
-                    tmp_path = os.path.join(dirname, t)
-                    if os.path.exists(tmp_path):
-                        os.remove(tmp_path)
+                clean_relative_files(PASS_MODE_MBTREE_FILES)
             if charparser.Bool(_DEL_SRC):
                 os.remove(filepath)
     print()
