@@ -6,7 +6,10 @@ import ffpb
 
 from default import config
 from modules import charparser, info_utils
+from language.locale_base import Language, get_default_language
 from pathlib import Path
+
+lang = Language(get_default_language(), 'en_US')
 
 
 class __CommonOutput:
@@ -210,6 +213,7 @@ def compress_video(config_parser: configparser.ConfigParser, filepath: str, task
     # EXTRA
     _DEL_SRC = config_parser.get('EXTRA', 'del_src')
     _THREADS = config_parser.get('EXTRA', 'threads')
+    _OVERRIDE = config_parser.get('EXTRA', 'override')
     if _THREADS.isdigit() and cpu_count() >= int(_THREADS) >= 1:
         add_arg('-threads', _THREADS)
     else:
@@ -268,6 +272,11 @@ def compress_video(config_parser: configparser.ConfigParser, filepath: str, task
             _COMMAND.append(ARGS[key])
         _COMMAND.append(OUT_FILEPATH)
         print('Shell Args: ' + ' '.join(_COMMAND))
+
+        if os.path.exists(OUT_FILEPATH) and not charparser.Bool(_OVERRIDE):
+            print(lang.get_string('NOT_OVERRIDE_OUTPUT_NOTICE'))
+            return
+
         _RET = ffpb.main(_COMMAND, encoding='utf-8')
         if _RET != 0:
             print("压制失败!")

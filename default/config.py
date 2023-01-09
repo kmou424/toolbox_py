@@ -95,7 +95,8 @@ class VideoConf:
         [
             lang.get_string("CONF_VIDEO_EXTRA_1"),
             lang.get_string("CONF_VIDEO_EXTRA_2"),
-            lang.get_string("CONF_VIDEO_EXTRA_3")
+            lang.get_string("CONF_VIDEO_EXTRA_3"),
+            lang.get_string("CONF_VIDEO_EXTRA_4")
         ],
         [
             lang.get_string("CONF_VIDEO_SKIP_1"),
@@ -112,7 +113,7 @@ class VideoConf:
                           ['prefix', 'suffix'],
                           ['input', 'ignore_input', 'output'],
                           ['enable', 'name'],
-                          ['del_src', 'threads'],
+                          ['del_src', 'threads', 'override'],
                           ['min_bitrate']]
 
     SECTIONS_CONF_VALUE = [['False', '60'],
@@ -124,7 +125,7 @@ class VideoConf:
                            ['[compressed]', ''],
                            ['none', '[relative]in|[relative]out', '[relative]out'],
                            ['False', 'log_video.txt'],
-                           ['False', '1'],
+                           ['False', '1', 'False'],
                            ['0']]
 
 
