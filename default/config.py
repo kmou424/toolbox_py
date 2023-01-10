@@ -121,7 +121,7 @@ class VideoConf:
                            ['False', 'cuvid', 'h264_cuvid'],
                            ['libx264', 'medium'],
                            ['True', 'crf', '23.5', '2000k', 'vbr'],
-                           ['mp4|mov', 'mp4'],
+                           ['mp4|mov|ts|mkv|wmv|avi|flv|rmvb', 'mp4'],
                            ['[compressed]', ''],
                            ['none', '[relative]in|[relative]out', '[relative]out'],
                            ['False', 'log_video.txt'],
