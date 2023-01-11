@@ -123,7 +123,7 @@ class VideoConf:
                            ['True', 'crf', '23.5', '2000k', 'vbr'],
                            ['mp4|mov|ts|mkv|wmv|avi|flv|rmvb', 'mp4'],
                            ['[compressed]', ''],
-                           ['none', '[relative]in|[relative]out', '[relative]out'],
+                           ['none', '[absolute]{input_dir}{path_delimiter}in|[absolute]{input_dir}{path_delimiter}out', '[relative]out'],
                            ['False', 'log_video.txt'],
                            ['False', '1', 'False'],
                            ['0']]
@@ -164,6 +164,6 @@ class ImageConf:
     SECTIONS_CONF_VALUE = [['2'],
                            ['False', '1080'],
                            ['jpg|png', 'jpg'],
-                           ['none', '[relative]in|[relative]out', '[relative]out'],
+                           ['none', '[absolute]{input_dir}{path_delimiter}in|[absolute]{input_dir}{path_delimiter}out', '[relative]out'],
                            ['True', 'log_image.txt'],
                            ['False', 'False']]
