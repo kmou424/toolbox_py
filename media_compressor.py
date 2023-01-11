@@ -90,7 +90,7 @@ print(lang.get_string('CONFIG_PATH_NOTICE') % Path(_CONFIG_PATH).absolute())
 config_parser.read(_CONFIG_PATH, 'utf-8')
 
 _INPUT_FORMAT = [_.lower() for _ in config_parser.get('IO_FORMAT', 'input').split('|')]
-_INPUT_DIRS = charparser.parse_path(config_parser.get('IO_DIR', 'input'), PWD).split('|')
+_INPUT_DIRS = [charparser.parse_path(_, PWD) for _ in config_parser.get('IO_DIR', 'input').split('|')]
 if _INPUT_DIRS == 'none':
     _INPUT_DIRS = [PWD]
 
