@@ -1,15 +1,14 @@
-from multiprocessing import cpu_count
-import os
-
 import configparser
+import os
+from multiprocessing import cpu_count
+from pathlib import Path
+
 import ffpb
 
 from default import config
-from modules import charparser, info_utils
-from modules.cleaner import clean_relative_files, PASS_MODE_LOG_FILES, PASS_MODE_MBTREE_FILES
 from language.locale_base import Language, get_default_language
-
-from pathlib import Path
+from modules import charparser, info_utils
+from modules.cleaner import clean_relative_files, PASS_MODE_MBTREE_FILES
 
 lang = Language(get_default_language(), 'en_US')
 

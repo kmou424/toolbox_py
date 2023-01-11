@@ -1,5 +1,6 @@
-import sys
 import os
+import sys
+
 
 # [文件整理]用于批量自动重命名夜樱字幕组的作品
 

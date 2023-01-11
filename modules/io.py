@@ -1,6 +1,3 @@
-import sys
-
-
 class IOColors:
     DISPLAY_DEFAULT = 0
     DISPLAY_HIGHLIGHT = 1

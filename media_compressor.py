@@ -1,13 +1,12 @@
-import os
-
 import configparser
+import os
 import sys
+from pathlib import Path
 
 from default import config
+from language.locale_base import Language, get_default_language
 from modules import filequery, charparser, compressor
 from modules.cleaner import clean_relative_files, create_relative_files, PASS_MODE_LOG_FILES, PASS_MODE_MBTREE_FILES
-from language.locale_base import Language, get_default_language
-from pathlib import Path
 
 config_parser = configparser.ConfigParser()
 lang = Language(get_default_language(), 'en_US')
