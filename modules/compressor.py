@@ -47,14 +47,18 @@ def has_arg(option: str):
     return option in ARGS
 
 
-def compress(config_parser: configparser.ConfigParser, filepath: str, task_cnt: int, compress_target: str):
+def compress(config_parser: configparser.ConfigParser, filepath: str, task_cnt: int, compress_target: str, is_last: bool):
+    common_output_info = __CommonOutput(config_parser, filepath)
     if compress_target == 'video':
-        compress_video(config_parser, filepath, task_cnt)
+        compress_video(config_parser, filepath, task_cnt, common_output_info)
     elif compress_target == 'image':
-        compress_image(config_parser, filepath, task_cnt)
+        compress_image(config_parser, filepath, task_cnt, common_output_info)
+        # Clean up empty output directory
+        if is_last and charparser.Bool(config_parser.get('EXTRA', 'replace_original_image')):
+            os.removedirs(common_output_info.OUTPUT_DIR)
 
 
-def compress_video(config_parser: configparser.ConfigParser, filepath: str, task_cnt: int):
+def compress_video(config_parser: configparser.ConfigParser, filepath: str, task_cnt: int, common_output_info: __CommonOutput):
     _VIDEO_INFO = info_utils.Video(filepath)
     _SIZE = _VIDEO_INFO.size
     # Decoder
@@ -135,7 +139,7 @@ def compress_video(config_parser: configparser.ConfigParser, filepath: str, task
         else:
             _CODEC_PRESET = _CODEC_PRESET + '(Not support or Misspelling)'
     else:
-        if _CODEC_PRESET == '' or _CODEC_PRESET == None:
+        if _CODEC_PRESET == '' or _CODEC_PRESET is None:
             _CODEC_PRESET = 'Not specified'
         else:
             _CODEC_PRESET = 'Encoder does not support preset config'
@@ -201,15 +205,15 @@ def compress_video(config_parser: configparser.ConfigParser, filepath: str, task
             add_arg('-level:v', '6.2')
 
     # Output file
-    _OUTPUT_INFO = __CommonOutput(config_parser, filepath)
+
     _PREFIX = config_parser.get('IO_FIX', 'prefix')
     _SUFFIX = config_parser.get('IO_FIX', 'suffix')
-    OUT_FILEPATH = "{dir}{delimiter}{prefix}{filename}{suffix}.{format}".format(dir=_OUTPUT_INFO.OUTPUT_DIR,
+    OUT_FILEPATH = "{dir}{delimiter}{prefix}{filename}{suffix}.{format}".format(dir=common_output_info.OUTPUT_DIR,
                                                                                 delimiter=charparser.get_path_delimiter(),
                                                                                 prefix=_PREFIX,
-                                                                                filename=_OUTPUT_INFO.FILENAME,
+                                                                                filename=common_output_info.FILENAME,
                                                                                 suffix=_SUFFIX,
-                                                                                format=_OUTPUT_INFO.OUTPUT_FORMAT)
+                                                                                format=common_output_info.OUTPUT_FORMAT)
 
     # EXTRA
     _DEL_SRC = config_parser.get('EXTRA', 'del_src')
@@ -232,13 +236,13 @@ def compress_video(config_parser: configparser.ConfigParser, filepath: str, task
     print()
     print("当前工作路径: " + os.getcwd())
     print("第" + str(task_cnt) + "个视频处理任务")
-    print("输入文件名: " + _OUTPUT_INFO.FILENAME_EXT)
+    print("输入文件名: " + common_output_info.FILENAME_EXT)
     print("输出文件名: {prefix}{filename}{suffix}.{format}".format(
         prefix=_PREFIX,
-        filename=_OUTPUT_INFO.FILENAME,
+        filename=common_output_info.FILENAME,
         suffix=_SUFFIX,
-        format=_OUTPUT_INFO.OUTPUT_FORMAT))
-    print("输出位置: " + _OUTPUT_INFO.OUTPUT_DIR)
+        format=common_output_info.OUTPUT_FORMAT))
+    print("输出位置: " + common_output_info.OUTPUT_DIR)
     print("视频码率: " + _BITRATE_DISPLAY)
     print("视频帧率: {src} -> {res}".format(src=_SRC_FRAMERATE_DISPLAY,
           res=_RES_FRAMERATE_DISPLAY))
@@ -289,7 +293,7 @@ def compress_video(config_parser: configparser.ConfigParser, filepath: str, task
     print()
 
 
-def compress_image(config_parser: configparser.ConfigParser, filepath: str, task_cnt: int):
+def compress_image(config_parser: configparser.ConfigParser, filepath: str, task_cnt: int, common_output_info: __CommonOutput):
     _IMAGE_INFO = info_utils.Image(filepath)
     _SIZE = _IMAGE_INFO.size
     # Input file
@@ -298,9 +302,8 @@ def compress_image(config_parser: configparser.ConfigParser, filepath: str, task
     _QUALITY = config_parser.get('TARGET_QUALITY', 'value')
     add_arg('-q:v', _QUALITY)
     # Output file
-    _OUTPUT_INFO = __CommonOutput(config_parser, filepath)
-    OUT_FILEPATH = _OUTPUT_INFO.OUTPUT_DIR + charparser.get_path_delimiter() + \
-        _OUTPUT_INFO.FILENAME + '.' + _OUTPUT_INFO.OUTPUT_FORMAT
+    OUT_FILEPATH = common_output_info.OUTPUT_DIR + charparser.get_path_delimiter() + \
+        common_output_info.FILENAME + '.' + common_output_info.OUTPUT_FORMAT
 
     # Resolution
     _Resolution = config_parser.get('TARGET_RESOLUTION', 'enable')
@@ -341,8 +344,8 @@ def compress_image(config_parser: configparser.ConfigParser, filepath: str, task
     print()
     print("当前工作路径: " + os.getcwd())
     print("第" + str(task_cnt) + "个图片处理任务")
-    print("输入文件名: " + _OUTPUT_INFO.FILENAME_EXT)
-    print("输出文件名: " + _OUTPUT_INFO.FILENAME + '.' + _OUTPUT_INFO.OUTPUT_FORMAT)
+    print("输入文件名: " + common_output_info.FILENAME_EXT)
+    print("输出文件名: " + common_output_info.FILENAME + '.' + common_output_info.OUTPUT_FORMAT)
     print("压缩质量: " + _QUALITY)
     print(
         "分辨率: {src} -> {res}".format(src=_SRC_RESOLUTION_DISPLAY, res=_RES_RESOLUTION_DISPLAY))
@@ -352,18 +355,18 @@ def compress_image(config_parser: configparser.ConfigParser, filepath: str, task
         _COMMAND.append(ARGS[key])
     _COMMAND.append(OUT_FILEPATH)
     _RET = ffpb.main(_COMMAND, encoding='utf-8')
-    _IMAGE_OUT_INFO = info_utils.Image(_OUTPUT_INFO.OUTPUT_DIR + charparser.get_path_delimiter() +
-                                       _OUTPUT_INFO.FILENAME + '.' + _OUTPUT_INFO.OUTPUT_FORMAT)
+    _IMAGE_OUT_INFO = info_utils.Image(common_output_info.OUTPUT_DIR + charparser.get_path_delimiter() +
+                                       common_output_info.FILENAME + '.' + common_output_info.OUTPUT_FORMAT)
 
     _LOG_FILE_ENABLE = config_parser.get('LOGGING', 'enable')
     _LOG_FILE = ''
     if charparser.Bool(_LOG_FILE_ENABLE):
         _LOG_FILE = open(os.getcwd() + charparser.get_path_delimiter() +
                          config_parser.get('LOGGING', 'name'), 'a', encoding='utf-8')
-        _LOG_FILE.write("[" + str(task_cnt) + "]" + _OUTPUT_INFO.FILENAME_EXT + ": " +
+        _LOG_FILE.write("[" + str(task_cnt) + "]" + common_output_info.FILENAME_EXT + ": " +
                         "\n    Input File Path: " + filepath + " (" + _IMAGE_INFO.fileSizeStr + ")" +
-                        "\n    Output File Path: " + _OUTPUT_INFO.OUTPUT_DIR + charparser.get_path_delimiter() +
-                        _OUTPUT_INFO.FILENAME + '.' + _OUTPUT_INFO.OUTPUT_FORMAT + " (" + _IMAGE_OUT_INFO.fileSizeStr +
+                        "\n    Output File Path: " + common_output_info.OUTPUT_DIR + charparser.get_path_delimiter() +
+                        common_output_info.FILENAME + '.' + common_output_info.OUTPUT_FORMAT + " (" + _IMAGE_OUT_INFO.fileSizeStr +
                         ")" + '\n')
     if _RET != 0:
         print("压缩失败!")

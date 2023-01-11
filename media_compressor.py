@@ -108,7 +108,7 @@ if _COMPRESS_TARGET == 'video' and 'pass' in config_parser.get('TARGET_ENCODER_O
 TASK_CNT = 0
 for FILE in _FILE_LIST:
     TASK_CNT += 1
-    compressor.compress(config_parser, FILE, TASK_CNT, _COMPRESS_TARGET)
+    compressor.compress(config_parser, FILE, TASK_CNT, _COMPRESS_TARGET, TASK_CNT == len(_FILE_LIST))
 
 if _COMPRESS_TARGET == 'video' and 'pass' in config_parser.get('TARGET_ENCODER_OPTION', 'mode'):
     clean_relative_files(PASS_MODE_MBTREE_FILES)
