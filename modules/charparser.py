@@ -48,7 +48,9 @@ def parse_path(path: str, ori_filepath: str):
 
     # replace preset variables
     preset_variables = dict()
-    preset_variables['src_dir'] = os.getcwd()
+    preset_variables['pwd'] = os.getcwd()
+    preset_variables['input_dir'] = ori_filepath if os.path.isdir(ori_filepath) else os.path.dirname(ori_filepath)
+    preset_variables['path_delimiter'] = get_path_delimiter()
     path = replace_variables(path, preset_variables)
 
     path_head = path[start:end]

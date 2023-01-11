@@ -21,8 +21,7 @@ class __CommonOutput:
     FILENAME = ''
 
     def __init__(self, config_parser: configparser.ConfigParser, filepath: str):
-        self.OUTPUT_DIR = charparser.parse_path(
-            config_parser.get('IO_DIR', 'output'), os.path.dirname(filepath))
+        self.OUTPUT_DIR = charparser.parse_path(config_parser.get('IO_DIR', 'output'), os.path.dirname(filepath))
         if not Path(self.OUTPUT_DIR).exists():
             os.makedirs(self.OUTPUT_DIR)
         self.OUTPUT_FORMAT = config_parser.get('IO_FORMAT', 'output')
