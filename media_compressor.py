@@ -95,39 +95,39 @@ if _INPUT_DIRS == 'none':
     _INPUT_DIRS = [PWD]
 
 # 多重推导式 为每个输入目录计算忽略目录
-_IGNORE_DIR = [charparser.parse_path(i, j)
-               for i in config_parser.get('IO_DIR', 'ignore_input').split('|')
-               for j in _INPUT_DIRS]
+_IGNORE_DIRS = [charparser.parse_path(i, j)
+                for i in config_parser.get('IO_DIR', 'ignore_input').split('|')
+                for j in _INPUT_DIRS]
 
-_FILE_LIST = []
+_TODO_FILES = []
 for input_dir in _INPUT_DIRS:
     # 为每个输入目录查找并排序
-    _EXT_LIST = filequery.search_by_ext(filequery.list_all_files(input_dir), _INPUT_FORMAT)
-    _EXT_LIST.sort()
-    _FILE_LIST.extend(_EXT_LIST)
+    _EXT_TODO_FILES = filequery.search_by_ext(filequery.list_all_files(input_dir), _INPUT_FORMAT)
+    _EXT_TODO_FILES.sort()
+    _TODO_FILES.extend(_EXT_TODO_FILES)
 
-for ignore in _IGNORE_DIR:
-    _NEW_FILE_LIST = []
-    for file in _FILE_LIST:
+for ignore in _IGNORE_DIRS:
+    _NEW_TODO_FILES = []
+    for file in _TODO_FILES:
         if file.startswith(ignore):
             print(lang.get_string("IGNORE_INPUT_NOTICE_HEAD"), file)
         else:
-            _NEW_FILE_LIST.append(file)
-    _FILE_LIST = _NEW_FILE_LIST
+            _NEW_TODO_FILES.append(file)
+    _TODO_FILES = _NEW_TODO_FILES
 
 # Pass mode prepare
 if _COMPRESS_TARGET == 'video' and 'pass' in config_parser.get('TARGET_ENCODER_OPTION', 'mode'):
     log_file_list = []
     for f in PASS_MODE_LOG_FILES:
-        # Sepical judgement: Only create log file not temp file
+        # Special judgement: Only create log file not temp file
         if not f.endswith('.temp'):
             log_file_list.append(f)
     create_relative_files(log_file_list)
 
 TASK_CNT = 0
-for FILE in _FILE_LIST:
+for FILE in _TODO_FILES:
     TASK_CNT += 1
-    compressor.compress(config_parser, FILE, TASK_CNT, _COMPRESS_TARGET, TASK_CNT == len(_FILE_LIST))
+    compressor.compress(config_parser, FILE, TASK_CNT, _COMPRESS_TARGET, TASK_CNT == len(_TODO_FILES))
 
 if _COMPRESS_TARGET == 'video' and 'pass' in config_parser.get('TARGET_ENCODER_OPTION', 'mode'):
     clean_relative_files(PASS_MODE_MBTREE_FILES)
