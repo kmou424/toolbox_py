@@ -64,18 +64,29 @@ if len(sys.argv) > 1:
     _COMPRESS_TARGET = sys.argv[1]
     _CONFIG_PATH = "toolbox_" + sys.argv[1] + ".ini"
     if len(sys.argv) > 2:
-        if sys.argv[2] == 'genconf':
-            if Path(_CONFIG_PATH).exists():
-                os.remove(_CONFIG_PATH)
-            createConfByDefault(_CONF_PRESET, _CONFIG_PATH)
-            print("Generate \'" + _CONFIG_PATH + "\' config file")
-            exit(0)
-        else:
-            unknownParam(sys.argv[2])
+        for i in range(2, len(sys.argv)):
+            if sys.argv[i] == 'genconf':
+                if Path(_CONFIG_PATH).exists():
+                    os.remove(_CONFIG_PATH)
+                createConfByDefault(_CONF_PRESET, _CONFIG_PATH)
+                print("Generate \'" + _CONFIG_PATH + "\' config file")
+                exit(0)
+            elif sys.argv[i].startswith('-c=') or sys.argv[i].startswith('--config='):
+                CMDLINE_CONFIG_PATH = sys.argv[i].removeprefix('-c=').removeprefix('--config=')
+                while CMDLINE_CONFIG_PATH.startswith('\"') or CMDLINE_CONFIG_PATH.startswith('\''):
+                    CMDLINE_CONFIG_PATH = CMDLINE_CONFIG_PATH.removeprefix('\"').removeprefix('\'')
+                while CMDLINE_CONFIG_PATH.endswith('\"') or CMDLINE_CONFIG_PATH.endswith('\''):
+                    CMDLINE_CONFIG_PATH = CMDLINE_CONFIG_PATH.removesuffix('\"').removesuffix('\'')
+                if os.path.exists(CMDLINE_CONFIG_PATH):
+                    _CONFIG_PATH = CMDLINE_CONFIG_PATH
+            else:
+                unknownParam(sys.argv[i])
 else:
     printHelp()
 if not Path(_CONFIG_PATH).exists():
     createConfByDefault(_CONF_PRESET, _CONFIG_PATH)
+
+print(lang.get_string('CONFIG_PATH_NOTICE') % Path(_CONFIG_PATH).absolute())
 config_parser.read(_CONFIG_PATH, 'utf-8')
 
 _INPUT_FORMAT = [_.lower() for _ in config_parser.get('IO_FORMAT', 'input').split('|')]

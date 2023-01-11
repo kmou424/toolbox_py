@@ -1,3 +1,5 @@
+CONFIG_PATH_NOTICE='Use config: %s'
+
 IGNORE_INPUT_NOTICE_HEAD='Ignore input:'
 NOT_OVERRIDE_OUTPUT_NOTICE='Output file is existed, skip'
 DELETE_FILE_NOTICE='Deleting: %s'
