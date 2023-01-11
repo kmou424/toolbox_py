@@ -90,14 +90,21 @@ print(lang.get_string('CONFIG_PATH_NOTICE') % Path(_CONFIG_PATH).absolute())
 config_parser.read(_CONFIG_PATH, 'utf-8')
 
 _INPUT_FORMAT = [_.lower() for _ in config_parser.get('IO_FORMAT', 'input').split('|')]
-_INPUT_DIR = charparser.parse_path(
-    config_parser.get('IO_DIR', 'input'), PWD)
-if _INPUT_DIR == 'none':
-    _INPUT_DIR = PWD
-_IGNORE_DIR = [charparser.parse_path(i, PWD) for i in config_parser.get('IO_DIR', 'ignore_input').split('|')]
-_FILE_LIST = filequery.search_by_ext(
-    filequery.list_all_files(_INPUT_DIR), _INPUT_FORMAT)
-_FILE_LIST.sort()
+_INPUT_DIRS = charparser.parse_path(config_parser.get('IO_DIR', 'input'), PWD).split('|')
+if _INPUT_DIRS == 'none':
+    _INPUT_DIRS = [PWD]
+
+# 多重推导式 为每个输入目录计算忽略目录
+_IGNORE_DIR = [charparser.parse_path(i, j)
+               for i in config_parser.get('IO_DIR', 'ignore_input').split('|')
+               for j in _INPUT_DIRS]
+
+_FILE_LIST = []
+for input_dir in _INPUT_DIRS:
+    # 为每个输入目录查找并排序
+    _EXT_LIST = filequery.search_by_ext(filequery.list_all_files(input_dir), _INPUT_FORMAT)
+    _EXT_LIST.sort()
+    _FILE_LIST.extend(_EXT_LIST)
 
 for ignore in _IGNORE_DIR:
     _NEW_FILE_LIST = []
