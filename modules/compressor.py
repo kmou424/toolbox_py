@@ -1,5 +1,6 @@
 import configparser
 import os
+import shutil
 from multiprocessing import cpu_count
 from pathlib import Path
 
@@ -283,6 +284,7 @@ def compress_video(config_parser: configparser.ConfigParser, filepath: str, task
             if 'pass' in _ENCODE_MODE:
                 clean_relative_files(PASS_MODE_MBTREE_FILES)
             if charparser.Bool(_DEL_SRC):
+                print(lang.get_string('DELETE_FILE_NOTICE') % filepath)
                 os.remove(filepath)
     print()
 
@@ -330,6 +332,11 @@ def compress_image(config_parser: configparser.ConfigParser, filepath: str, task
 
     # EXTRA
     _DEL_SRC = config_parser.get('EXTRA', 'del_src')
+    _REPLACE_ORIGINAL_IMAGE = config_parser.get('EXTRA', 'replace_original_image')
+
+    # If replace original image, we must delete original image first
+    if charparser.Bool(_REPLACE_ORIGINAL_IMAGE):
+        _DEL_SRC = 'True'
 
     print()
     print("当前工作路径: " + os.getcwd())
@@ -362,5 +369,11 @@ def compress_image(config_parser: configparser.ConfigParser, filepath: str, task
         print("压缩失败!")
     else:
         if charparser.Bool(_DEL_SRC):
+            print(lang.get_string('DELETE_FILE_NOTICE') % filepath)
             os.remove(filepath)
+        if charparser.Bool(_REPLACE_ORIGINAL_IMAGE):
+            input_dir = os.path.dirname(filepath)
+            move_target_path = os.path.join(input_dir, os.path.basename(OUT_FILEPATH))
+            print(lang.get_string('REPLACE_ORIGINAL_FILE_NOTICE') % (OUT_FILEPATH, move_target_path))
+            shutil.move(OUT_FILEPATH, move_target_path)
     print()

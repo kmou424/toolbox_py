@@ -150,18 +150,20 @@ class ImageConf:
                          'You can insert preset variables such as {var_name}',
                          'Available variables: {src_dir}'],
                         ['[Optional] To save log for progress'],
-                        ['[Optional] Some extra settings', 'del_src: Delete original file when compress completed']]
+                        ['[Optional] Some extra settings',
+                         'del_src: Delete original file when compress completed',
+                         'replace_original_image: Use output image to replace input image']]
 
     SECTIONS_CONF_NAME = [['value'],
                           ['enable', 'value'],
                           ['input', 'output'],
                           ['input', 'output'],
                           ['enable', 'name'],
-                          ['del_src']]
+                          ['del_src', 'replace_original_image']]
 
     SECTIONS_CONF_VALUE = [['2'],
                            ['False', '1080'],
                            ['jpg|png', 'jpg'],
                            ['none', '[relative]out'],
                            ['True', 'log_image.txt'],
-                           ['False']]
+                           ['False', 'False']]

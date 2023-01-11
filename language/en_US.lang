@@ -1,5 +1,7 @@
 IGNORE_INPUT_NOTICE_HEAD='Ignore input:'
 NOT_OVERRIDE_OUTPUT_NOTICE='Output file is existed, skip'
+DELETE_FILE_NOTICE='Deleting: %s'
+REPLACE_ORIGINAL_FILE_NOTICE='Replacing: %s -> %s'
 
 CONF_VIDEO_FRAMERATE_1='Intro: [Optional] Set target framerate for your video'
 CONF_VIDEO_QUALITY_1='Intro: [Optional] Set video quality for your video'

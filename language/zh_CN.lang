@@ -1,5 +1,7 @@
 IGNORE_INPUT_NOTICE_HEAD='跳过输入:'
 NOT_OVERRIDE_OUTPUT_NOTICE='输出文件已存在, 跳过压制'
+DELETE_FILE_NOTICE='删除: %s'
+REPLACE_ORIGINAL_FILE_NOTICE='替换: %s -> %s'
 
 CONF_VIDEO_FRAMERATE_1='说明: [可选] 为视频设置帧率'
 CONF_VIDEO_QUALITY_1='说明: [可选] 为视频选择质量(分辨率)'
