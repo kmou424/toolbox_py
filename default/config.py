@@ -157,13 +157,13 @@ class ImageConf:
     SECTIONS_CONF_NAME = [['value'],
                           ['enable', 'value'],
                           ['input', 'output'],
-                          ['input', 'output'],
+                          ['input', 'ignore_input', 'output'],
                           ['enable', 'name'],
                           ['del_src', 'replace_original_image']]
 
     SECTIONS_CONF_VALUE = [['2'],
                            ['False', '1080'],
                            ['jpg|png', 'jpg'],
-                           ['none', '[relative]out'],
+                           ['none', '[relative]in|[relative]out', '[relative]out'],
                            ['True', 'log_image.txt'],
                            ['False', 'False']]
