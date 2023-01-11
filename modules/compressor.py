@@ -46,14 +46,15 @@ def has_arg(option: str):
     return option in ARGS
 
 
-def compress(config_parser: configparser.ConfigParser, filepath: str, task_cnt: int, compress_target: str, is_last: bool):
+def compress(config_parser: configparser.ConfigParser, filepath: str, task_cnt: int, compress_target: str,
+             is_last_for_current_input: bool):
     common_output_info = __CommonOutput(config_parser, filepath)
     if compress_target == 'video':
         compress_video(config_parser, filepath, task_cnt, common_output_info)
     elif compress_target == 'image':
         compress_image(config_parser, filepath, task_cnt, common_output_info)
         # Clean up empty output directory
-        if is_last and charparser.Bool(config_parser.get('EXTRA', 'replace_original_image')):
+        if is_last_for_current_input and charparser.Bool(config_parser.get('EXTRA', 'replace_original_image')):
             os.removedirs(common_output_info.OUTPUT_DIR)
 
 

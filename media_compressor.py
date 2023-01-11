@@ -124,10 +124,12 @@ if _COMPRESS_TARGET == 'video' and 'pass' in config_parser.get('TARGET_ENCODER_O
             log_file_list.append(f)
     create_relative_files(log_file_list)
 
-TASK_CNT = 0
-for FILE in _TODO_FILES:
-    TASK_CNT += 1
-    compressor.compress(config_parser, FILE, TASK_CNT, _COMPRESS_TARGET, TASK_CNT == len(_TODO_FILES))
+for IDX in range(0, len(_TODO_FILES)):
+    COUNT = IDX + 1
+    CURRENT_FILE = _TODO_FILES[IDX]
+    NEXT_FILE = None if IDX + 1 >= len(_TODO_FILES) else _TODO_FILES[IDX + 1]
+    IS_LAST_FOR_CURRENT_INPUT = True if NEXT_FILE is None else os.path.dirname(CURRENT_FILE) != os.path.dirname(NEXT_FILE)
+    compressor.compress(config_parser, CURRENT_FILE, COUNT, _COMPRESS_TARGET, IS_LAST_FOR_CURRENT_INPUT)
 
 if _COMPRESS_TARGET == 'video' and 'pass' in config_parser.get('TARGET_ENCODER_OPTION', 'mode'):
     clean_relative_files(PASS_MODE_MBTREE_FILES)
