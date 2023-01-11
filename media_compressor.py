@@ -78,7 +78,7 @@ if not Path(_CONFIG_PATH).exists():
     createConfByDefault(_CONF_PRESET, _CONFIG_PATH)
 config_parser.read(_CONFIG_PATH, 'utf-8')
 
-_INPUT_FORMAT = config_parser.get('IO_FORMAT', 'input').split('|')
+_INPUT_FORMAT = [_.lower() for _ in config_parser.get('IO_FORMAT', 'input').split('|')]
 _INPUT_DIR = charparser.parse_path(
     config_parser.get('IO_DIR', 'input'), PWD)
 if _INPUT_DIR == 'none':
@@ -86,6 +86,7 @@ if _INPUT_DIR == 'none':
 _IGNORE_DIR = [charparser.parse_path(i, PWD) for i in config_parser.get('IO_DIR', 'ignore_input').split('|')]
 _FILE_LIST = filequery.search_by_ext(
     filequery.list_all_files(_INPUT_DIR), _INPUT_FORMAT)
+_FILE_LIST.sort()
 
 for ignore in _IGNORE_DIR:
     _NEW_FILE_LIST = []

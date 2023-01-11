@@ -2,7 +2,7 @@ def search_by_ext(_list: list, _ext_list: list):
     _result = []
     for ext in _ext_list:
         for item in _list:
-            if str(item).endswith('.' + ext):
+            if str(item).lower().endswith('.' + ext):
                 _result.append(str(item))
     return _result
 
