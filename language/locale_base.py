@@ -24,13 +24,14 @@ class Language:
     def __load_from_file(self, lang_file: Path):
         lines = lang_file.read_text(encoding='utf-8').split('\n')
         for line in lines:
+            line = line.strip()
             idx = line.find('=')
             if line == '' or line.startswith('#'):
                 continue
             if idx == -1:
                 break
-            key = line[0:idx]
-            content = line[idx+1:]
+            key = line[0:idx].strip()
+            content = line[idx+1:].strip()
             if content.startswith('\'') or content.startswith('\"'):
                 content = content[1:]
             else:
