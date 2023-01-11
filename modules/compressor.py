@@ -214,7 +214,7 @@ def compress_video(config_parser: configparser.ConfigParser, filepath: str, task
     # EXTRA
     _DEL_SRC = config_parser.get('EXTRA', 'del_src')
     _THREADS = config_parser.get('EXTRA', 'threads')
-    _OVERRIDE = config_parser.get('EXTRA', 'override')
+    _OVERRIDE_OUTPUT = config_parser.get('EXTRA', 'override_output')
     if _THREADS.isdigit() and cpu_count() >= int(_THREADS) >= 1:
         add_arg('-threads', _THREADS)
     else:
@@ -274,7 +274,7 @@ def compress_video(config_parser: configparser.ConfigParser, filepath: str, task
         _COMMAND.append(OUT_FILEPATH)
         print('Shell Args: ' + ' '.join(_COMMAND))
 
-        if os.path.exists(OUT_FILEPATH) and not charparser.Bool(_OVERRIDE):
+        if os.path.exists(OUT_FILEPATH) and not charparser.Bool(_OVERRIDE_OUTPUT):
             print(lang.get_string('NOT_OVERRIDE_OUTPUT_NOTICE'))
             return
         _RET = ffpb.main(_COMMAND, encoding='utf-8')

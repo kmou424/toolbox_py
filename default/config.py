@@ -113,7 +113,7 @@ class VideoConf:
                           ['prefix', 'suffix'],
                           ['input', 'ignore_input', 'output'],
                           ['enable', 'name'],
-                          ['del_src', 'threads', 'override'],
+                          ['del_src', 'threads', 'override_output'],
                           ['min_bitrate']]
 
     SECTIONS_CONF_VALUE = [['False', '60'],
