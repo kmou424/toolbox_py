@@ -113,7 +113,7 @@ class VideoConf:
                           ['prefix', 'suffix'],
                           ['input', 'ignore_input', 'output'],
                           ['enable', 'name'],
-                          ['del_src', 'threads', 'override_output'],
+                          ['del_src', 'threads', 'override_output', 'replace_input_by_output'],
                           ['min_bitrate']]
 
     SECTIONS_CONF_VALUE = [['False', '60'],
@@ -125,7 +125,7 @@ class VideoConf:
                            ['[compressed]', ''],
                            ['none', '[absolute]{input_dir}{path_delimiter}in|[absolute]{input_dir}{path_delimiter}out', '[relative]out'],
                            ['False', 'log_video.txt'],
-                           ['False', '1', 'False'],
+                           ['False', '1', 'False', 'False'],
                            ['0']]
 
 
@@ -152,14 +152,14 @@ class ImageConf:
                         ['[Optional] To save log for progress'],
                         ['[Optional] Some extra settings',
                          'del_src: Delete original file when compress completed',
-                         'replace_original_image: Use output image to replace input image']]
+                         'replace_input_by_output: Use output file to replace input file']]
 
     SECTIONS_CONF_NAME = [['value'],
                           ['enable', 'value'],
                           ['input', 'output'],
                           ['input', 'ignore_input', 'output'],
                           ['enable', 'name'],
-                          ['del_src', 'replace_original_image']]
+                          ['del_src', 'replace_input_by_output']]
 
     SECTIONS_CONF_VALUE = [['2'],
                            ['False', '1080'],

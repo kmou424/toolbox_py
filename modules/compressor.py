@@ -217,6 +217,12 @@ def compress_video(config_parser: configparser.ConfigParser, filepath: str, task
 
     # EXTRA
     _DEL_SRC = config_parser.get('EXTRA', 'del_src')
+    _REPLACE_INPUT_BY_OUTPUT = config_parser.get('EXTRA', 'replace_input_by_output')
+
+    # If replace original image, we must delete original image first
+    if charparser.Bool(_REPLACE_INPUT_BY_OUTPUT):
+        _DEL_SRC = 'True'
+
     _THREADS = config_parser.get('EXTRA', 'threads')
     _OVERRIDE_OUTPUT = config_parser.get('EXTRA', 'override_output')
     if _THREADS.isdigit() and cpu_count() >= int(_THREADS) >= 1:
@@ -290,6 +296,12 @@ def compress_video(config_parser: configparser.ConfigParser, filepath: str, task
             if charparser.Bool(_DEL_SRC):
                 print(lang.get_string('DELETE_FILE_NOTICE') % filepath)
                 os.remove(filepath)
+            if charparser.Bool(_REPLACE_INPUT_BY_OUTPUT):
+                input_dir = os.path.dirname(filepath)
+                move_target_path = os.path.join(input_dir, os.path.basename(OUT_FILEPATH))
+                if OUT_FILEPATH != move_target_path:
+                    print(lang.get_string('REPLACE_ORIGINAL_FILE_NOTICE') % (OUT_FILEPATH, move_target_path))
+                    shutil.move(OUT_FILEPATH, move_target_path)
     print()
 
 
@@ -335,10 +347,10 @@ def compress_image(config_parser: configparser.ConfigParser, filepath: str, task
 
     # EXTRA
     _DEL_SRC = config_parser.get('EXTRA', 'del_src')
-    _REPLACE_ORIGINAL_IMAGE = config_parser.get('EXTRA', 'replace_original_image')
+    _REPLACE_INPUT_BY_OUTPUT = config_parser.get('EXTRA', 'replace_input_by_output')
 
     # If replace original image, we must delete original image first
-    if charparser.Bool(_REPLACE_ORIGINAL_IMAGE):
+    if charparser.Bool(_REPLACE_INPUT_BY_OUTPUT):
         _DEL_SRC = 'True'
 
     print()
@@ -374,9 +386,10 @@ def compress_image(config_parser: configparser.ConfigParser, filepath: str, task
         if charparser.Bool(_DEL_SRC):
             print(lang.get_string('DELETE_FILE_NOTICE') % filepath)
             os.remove(filepath)
-        if charparser.Bool(_REPLACE_ORIGINAL_IMAGE):
+        if charparser.Bool(_REPLACE_INPUT_BY_OUTPUT):
             input_dir = os.path.dirname(filepath)
             move_target_path = os.path.join(input_dir, os.path.basename(OUT_FILEPATH))
-            print(lang.get_string('REPLACE_ORIGINAL_FILE_NOTICE') % (OUT_FILEPATH, move_target_path))
-            shutil.move(OUT_FILEPATH, move_target_path)
+            if OUT_FILEPATH != move_target_path:
+                print(lang.get_string('REPLACE_ORIGINAL_FILE_NOTICE') % (OUT_FILEPATH, move_target_path))
+                shutil.move(OUT_FILEPATH, move_target_path)
     print()
